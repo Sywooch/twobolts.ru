@@ -1,0 +1,479 @@
+h1 {
+    margin-bottom: 20px;
+}
+
+.container {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+header {
+    width: 100%;
+    padding: 10px;
+    background: #eee;
+    box-shadow: 0 1px 5px #aaa;
+    position: fixed;
+    z-index: 10;
+}
+
+nav {
+    position: fixed;
+    height: 100%;
+    padding: 75px 0 15px;
+    width: 115px;
+    background: #666;
+    z-index: 5;
+    box-shadow: 1px 0 3px #999;
+}
+
+nav a {
+    color: #aaa;
+    display: block;
+    text-align: center;
+    padding: 0 10px 10px;
+    font-size: 12px;
+}
+
+nav a:hover, nav a:active, nav a.active, nav a:focus {
+    color: #fff;
+    text-decoration: none;
+}
+
+nav a .fa {
+    font-size: 36px;
+    display: block;
+}
+.btn .fa {
+    margin-right: 5px;
+}
+
+.admin section {
+    display: none;
+    position: fixed;
+    height: 100%;
+    background: #eee;
+    padding: 15px;
+    left: 115px;
+    width: 215px;
+}
+
+.admin section.active {
+    display: block;
+}
+
+.admin-container {
+    margin: 75px 20px 90px 135px;
+}
+
+.user-column-link img {
+    margin-right: 5px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+}
+
+.grid-filter-select {
+    width: 48%;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+a.editable {
+    text-decoration: none;
+    border-bottom: 1px dashed;
+    padding-bottom: 2px;
+}
+
+a.editable:hover {
+    border-bottom: 1px dashed transparent;
+}
+
+a.icon-right .fa {
+    margin-left: 5px;
+}
+
+a.icon-left .fa {
+    margin-right: 5px;
+}
+
+.table .label {
+    font-size: 14px;
+    padding: 5px 15px;
+}
+
+.label a {
+    color: #fff;
+    margin-bottom: 5px;
+}
+
+.action-cell a {
+    padding: 0 5px;
+    font-size: 1.5em;
+    color: #999;
+}
+
+.action-cell a.active, .action-cell a:hover {
+    color: #222;
+}
+
+.field-news-title, .field-news-include_excerpt {
+    margin-bottom: 0;
+}
+
+#getPermalink, #savePermalink, #cancelPermalink, #editable-post-name-full {
+    display: none;
+    position: relative;
+}
+
+#edit-slug-box.hidden {
+    visibility: hidden;
+}
+
+#editable-post-name-input
+{
+    display: inline-block;
+    width: 220px;
+}
+
+.field-news-include_excerpt .help-block {
+    display: none;
+}
+
+.file-zoom-content {
+    height: auto;
+}
+
+.fixed-bottom-toolbar {
+    bottom: 0;
+    left: 115px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    width: 100%;
+    padding: 15px 20px;
+    margin: 0;
+    z-index: 100;
+}
+
+.fixed-bottom-toolbar.fixed {
+    position: fixed;
+    box-shadow: 0 -2px 6px -3px #666;
+    border-radius: 0;
+}
+
+.help-block, .form-group:last-child {
+    margin-bottom: 0;
+}
+
+.field-news-source {
+    margin-bottom: 20px;
+}
+
+.loader-holder {
+    position: relative;
+}
+
+#addNewsModel, #modelAdding {
+    display: none;
+}
+
+.news-models-list, #addNewsModel {
+    margin-top: 10px;
+}
+
+.news-models {
+    margin-top: 20px;
+}
+
+.news-model-item {
+    background-color: #e4e4e4;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    cursor: default;
+    margin-right: 5px;
+    margin-top: 5px;
+    padding: 5px;
+    display: inline-block;
+}
+
+.news-model-item .fa {
+    color: #999;
+    cursor: pointer;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.news-model-item .fa:hover {
+    color: #333;
+}
+
+.settings-sortable {
+    border: 0;
+    margin-bottom: 0;
+}
+
+.settings-sortable li {
+    margin: 5px 0 0 0;
+    padding: 5px;
+}
+
+.settings-sortable li > span {
+    margin: 0 5px;
+    display: inline-block;
+    line-height: 40px;
+    max-height: 40px;
+}
+
+.settings-sortable li > span.criteria-icon img {
+    width: 32px;
+    height: 32px;
+}
+
+.settings-sortable li > span.criteria-name {
+
+}
+
+.settings-sortable li > span .glyphicon {
+    line-height: 40px;
+}
+
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    padding-top: 30px; height: 0; overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.video-container iframe,
+.video-container object,
+.video-container embed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.field-comparisoncriteria-icon .file-preview-image {
+    height: 32px !important;
+}
+.field-comparisoncriteria-icon .file-preview-frame {
+    height: 100px !important;
+}
+
+.category-options {
+    display: none;
+    border: 1px solid #ddd;
+    border-top: none;
+    margin: -1px 0 10px;
+    padding: 5px;
+    box-shadow: 0 5px 8px -3px #ccc;
+}
+
+.category-nest .fa {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.category-options li {
+    border: none;
+    margin: 0;
+}
+
+.category-options li > span {
+    line-height: 24px;
+    max-height: 24px;
+}
+
+.category-options .action-cell a {
+    font-size: 1em;
+    line-height: 24px;
+}
+
+.category-options .action-cell {
+    margin-top: -10px;
+}
+
+.form-container hr {
+    margin-left: -15px;
+    margin-right: -15px;
+    border-color: #e5e5e5;
+}
+
+.modal-btn-group {
+    width: 100%;
+    margin: 0 -15px -15px;
+    padding: 15px;
+    box-sizing: content-box;
+    background: #f7f7f7;
+    border-radius: 0 0 5px 5px;
+    border-top: 1px solid #e5e5e5;
+    text-align: right;
+}
+
+.modal-footer .modal-btn-group {
+    margin-top: -15px;
+    border-top: 0;
+}
+
+.modal-md {
+    width: 450px;
+}
+
+#w_admin_comments td {
+    word-break: break-all;
+    vertical-align: top !important;
+}
+
+td .thumbnail {
+    display: inline-block;
+}
+
+.panel, .btn, .form-control, .modal-content, .thumbnail,
+.select2-container--krajee .select2-selection,
+.select2-container--krajee .select2-search--dropdown .select2-search__field,
+.btn-sm, .btn-group-sm > .btn, .panel-group .panel {
+    border-radius: 0;
+}
+
+.manufacturer-wrapper, .model-wrapper, .car-manufacturer-wrapper, .car-model-wrapper {
+    position: relative;
+}
+
+.existing-engines {
+    max-height: 245px;
+    overflow: auto;
+}
+
+.existing-engines .checkbox, .car-engine-wrapper .checkbox {
+    margin: 0;
+    padding: 6px;
+}
+
+.existing-engines .checkbox.selected, .car-engine-wrapper .checkbox.selected {
+    color: #31708f;
+    background-color: #d9edf7;
+}
+
+.existing-engines .checkbox:hover, .car-engine-wrapper .checkbox:hover {
+    color: #fff;
+    background-color: #337ab7;
+}
+
+.existing-engines label .fa, .car-engine-wrapper label .fa {
+    margin-left: 5px;
+}
+
+.existing-engines .checkbox:hover .fa, .car-engine-wrapper .checkbox:hover .fa {
+    color: #fff;
+}
+
+.existing-engines .checkbox label, .car-engine-wrapper  .checkbox label {
+    display: block;
+}
+
+.model-wrapper > .form-group {
+    margin-bottom: 15px;
+}
+
+.panel {
+    box-shadow: 0 4px 5px #eee;
+}
+
+.field-car-engine_id {
+    margin-bottom: 0;
+}
+
+.field-car-engine_id .help-block {
+    display: none;
+}
+
+#clone-list {
+    display: inline-block;
+}
+
+.car-options-wrapper .list-group-item {
+    padding: 15px;
+}
+
+.relative {
+    position: relative;
+}
+
+.car-options-wrapper .list-group .list-group-item span {
+    position: absolute;
+    right: 7px;
+    bottom: 7px;
+    color: #666;
+    font-size: 12px;
+}
+
+.car-options-wrapper .list-group {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.car-options-wrapper .panel .list-group .list-group-item {
+    width: 33.333%;
+    margin-bottom: 0;
+    border-width: 0 0 1px 0;
+}
+
+.car-options-wrapper .collapse {
+    margin-bottom: -1px;
+}
+
+.car-options-wrapper .panel > .panel-collapse > .list-group:last-child .list-group-item:last-child {
+    border-bottom: 1px solid #ddd;
+}
+
+.car-options-wrapper .panel {
+    box-shadow: none;
+}
+
+.alert-summary {
+    padding: 10px 20px;
+    margin: 0 0 15px 0;
+    border-radius: 0;
+}
+
+.default-summary {
+    color: #000;
+    background: #f5f5f5;
+    border-left: 5px solid #e7e7e7;
+}
+
+.danger-summary {
+    color: #a94442;
+    background: #f2dede;
+    border-left: 5px solid #ebccd1;
+}
+
+.warning-summary {
+    color: #8a6d3b;
+    background: #fcf8e3;
+    border-left: 5px solid #faebcc;
+}
+
+.success-summary {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-left: 5px solid #d6e9c6;
+}
+
+.info-summary {
+    color: #31708f;
+    background-color: #d9edf7;
+    border-left: 5px solid #bcdff1;
+}
+
+.primary-summary {
+    color: #fff;
+    background-color: #337ab7;
+    border-left: 5px solid #195181;
+}
+
+.alert-dismissable .close, .alert-dismissible .close {
+    right: -10px;
+}

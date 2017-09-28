@@ -1,0 +1,21 @@
+.input_error {
+    border: 1px solid #a94442;
+}
+
+.fnErrorMsg {
+    color: #a94442;
+    font-size: 11px;
+    visibility: hidden;
+}
+
+.fnShowErrorMsg {
+    visibility: visible;
+}
+
+label {
+    font-size: 14px;
+}
+
+textarea.form-control {
+    resize: vertical;
+}

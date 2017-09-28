@@ -1,0 +1,124 @@
+.comments-wrap h2 a {
+    text-decoration: none;
+    border-bottom: 1px dotted #ccc;
+    color: #000;
+    font-weight: bold;
+}
+
+.comments-wrap sup {
+    font-size: 12px;
+    color: #ff4500;
+}
+
+.comments-wrap {
+    padding: 20px 0;
+    background: #fff;
+}
+
+.comments-wrap h2 {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.new-comment {
+    background-color: #dff0d8;
+}
+
+.user-comment-wrapper {
+    padding: 20px 10px;
+    border-bottom: 1px solid rgba(226, 226, 226, 0.46);
+    display: flex;
+    justify-content: flex-start;
+    align-content: flex-start;
+    align-items: flex-start;
+    color: #777;
+}
+
+.user-comment-wrapper:hover {
+    color: #000;
+    background: #f1f1f1;
+}
+
+.user-comment-date {
+    font-size: 12px;
+    color:#ccc;
+    margin-right: 10px;
+}
+
+.user-comment-text {
+    font-size: 14px;
+    line-height: 20px;
+    padding: 0;
+    width: 600px;
+}
+
+.user-comment-text p {
+    margin-bottom: 10px;
+}
+
+#btn_comment_reply, #btn_comment_quote {
+    color: #999;
+    font-weight: bold;
+    font-size: 13px;
+    margin-left: 5px;
+    text-decoration: underline;
+}
+
+#btn_comment_reply:hover, #btn_comment_quote:hover {
+    text-decoration: none;
+}
+
+.comments-btn-wrap {
+    margin-left: 240px;
+}
+
+#btn_more_comment {
+    margin: 20px 0 0;
+    width: 400px;
+    box-shadow: none;
+}
+
+.comment-form {
+    margin-left: 240px;
+    position: relative;
+    padding-top: 20px;
+}
+
+.comment-form textarea {
+    width: 500px;
+    height: 120px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 2px #979797 inset;
+    font-family: Arial, sans-serif;
+    resize: vertical;
+}
+
+.comment-button-group {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin-top: 10px;
+}
+
+.comment-button-group > .fa {
+    margin-left: 10px;
+    flex-shrink: 0;
+}
+
+#btn_add_comment {
+    flex-shrink: 0;
+}
+
+#btn_clear_comment {
+    margin-left: 10px;
+    align-self: center;
+    flex-shrink: 0;
+    font-size: 14px;
+}
+
+.need-auth {
+    font-size: 13px;
+    margin: 10px 0 0;
+    width: 500px;
+}
