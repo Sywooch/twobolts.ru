@@ -9,9 +9,13 @@
 /** @var User $user */
 
 use app\components\IconHelper;
+use app\components\TimeZoneHelper;
 use app\models\User;
+use kartik\checkbox\CheckboxX;
+use kartik\widgets\Select2;
 use yii\bootstrap\Modal;
 use yii\helpers\Html;
+use yii\web\JsExpression;
 
 $this->title = Yii::t('app', 'User') . ' ' . $user->username . ' — ' . Yii::$app->params['siteTitle'];
 
@@ -38,16 +42,38 @@ $this->title = Yii::t('app', 'User') . ' ' . $user->username . ' — ' . Yii::$a
 
                     <p><i class="fa fa-envelope"></i> <?= $user->email ? $user->email : Yii::t('app', 'No Email'); ?></p>
 
-                    <a href="#" class="edit_profile_link" id="edit_email"><?= IconHelper::show('edit'); ?>Сменить e-mail</a>
-                    <?php if($user->password): ?>
-                        <span class="vertical-dash"></span>
+                    <a href="#" class="edit_profile_link" id="edit_email" style="margin-bottom: 4px;"><?= IconHelper::show('edit'); ?>Сменить электронную почту</a>
+
+                    <?php if ($user->password): ?>
                         <a href="#" class="edit_profile_link" id="edit_password"><?= IconHelper::show('password'); ?>Сменить пароль</a>
                     <?php endif; ?>
 
                     <?php if ($user->email): ?>
-                        <p class="info-disclaimer"><i class="fa fa-info-circle"></i><br>
-                            Ваш адрес e-mail виден только вам,<br>
-                            и необходим только в случае восстановления пароля.</p>
+                        <p class="info-disclaimer">
+                            <i class="fa fa-info-circle"></i><br>
+                            Ваш адрес электронной почты виден только вам, и необходим только в случае восстановления пароля.
+                        </p>
+
+                        <?php if ($user->profile): ?>
+                            <div class="profile-notification">
+                                <?= CheckboxX::widget([
+                                    'name' => 'profile_notification',
+                                    'value' => $user->profile->notification,
+                                    'initInputType' => CheckboxX::INPUT_CHECKBOX,
+                                    'options' => [
+                                        'id' => 'profile_notification'
+                                    ],
+                                    'pluginOptions' => [
+                                        'threeState' => false
+                                    ],
+	                                'pluginEvents' => [
+		                                'change' => new JsExpression('function() { User.updateProfileNotification(); }')
+                                    ]
+                                ]); ?>
+
+                                <label class="cbx-label" for="profile_notification"><?= $user->profile->getAttributeLabel('notification'); ?></label>
+                            </div>
+                        <?php endif; ?>
                     <?php endif ?>
                 </div>
 
@@ -71,7 +97,9 @@ $this->title = Yii::t('app', 'User') . ' ' . $user->username . ' — ' . Yii::$a
             <div class="clear"></div>
         </div>
     </div>
-    
+
+    <div class="clear"></div>
+
     <?= $this->render('_info', [
         'isOwn' => true,
         'user' => $user,
@@ -97,7 +125,7 @@ Modal::begin([
 
 <?php if ($user->email): ?>
     <p><strong><i class="fa fa-exclamation-triangle"></i> Внимание!</strong></p>
-    <p>На текущий адрес e-mail будет выслано письмо с инструкцией для подключения нового адреса. Будьте внимательны при выполнении данной процедуры. Если у Вас возникнут вопросы, свяжитесь со службой поддержки. </p>
+    <p>На текущий адрес электронной почты будет выслано письмо с инструкцией для подключения нового адреса. Будьте внимательны при выполнении данной процедуры. Если у Вас возникнут вопросы, свяжитесь со службой поддержки. </p>
     <p>&nbsp;</p>
     <p><strong>Текущий адрес</strong>: <?= $user->email; ?></p>
     <?= Html::hiddenInput(
@@ -109,7 +137,7 @@ Modal::begin([
     ); ?>
 <?php else: ?>
     <p><strong><i class="fa fa-exclamation-triangle"></i> Внимание!</strong></p>
-    <p>На указанный адрес e-mail будет выслано письмо с инструкцией для подключения нового адреса. Будьте внимательны при выполнении данной процедуры. Если у Вас возникнут вопросы, свяжитесь со службой поддержки. </p>
+    <p>На указанный адрес электронной почты будет выслано письмо с инструкцией для подключения нового адреса. Будьте внимательны при выполнении данной процедуры. Если у Вас возникнут вопросы, свяжитесь со службой поддержки. </p>
     <p>&nbsp;</p>
     <?= Html::textInput(
         'email',
@@ -251,6 +279,23 @@ Modal::begin([
                 'placeholder' => Yii::t('app', 'Enter City')
             ]
         ); ?>
+    </div>
+
+    <div class="form-group">
+		<?= Html::label(Yii::t('app', 'Timezone'), 'timezone') ?>
+		<?= Select2::widget([
+            'name' => 'timezone',
+			'value' => $user->timezone,
+			'data' => TimeZoneHelper::timeZones(),
+			'options' => [
+				'id' => 'timezone',
+			],
+            'pluginOptions' => [
+	            'allowClear' => false,
+	            'language' => Yii::$app->language,
+	            'placeholder' => Yii::t('app', 'Find a time zone...'),
+            ]
+		]); ?>
     </div>
 
     <div class="form-group">

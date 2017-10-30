@@ -106,7 +106,24 @@ return [
 	'Update Car' => 'Редактировать автомобиль',
     'Technical' => 'Характеристики',
 	'Car was deleted.' => 'Автомобиль успешно удален.',
-
 	'Created cars' => 'Успешно создано: ',
-	'{n,plural,=0{cars} one{cars} few{cars} other{cars}}' => '{n,plural,=0{автомобилей} one{# автомобиль} few{# автомобиля} other{# автомобилей}}'
+	'{n,plural,=0{cars} one{cars} few{cars} other{cars}}' => '{n,plural,=0{автомобилей} one{# автомобиль} few{# автомобиля} other{# автомобилей}}',
+
+	'Create User' => 'Добавить пользователя',
+	'Update User' => 'Редактировать пользователя',
+	'Activated' => 'Активированый',
+	'Not activated' => 'Не активированый',
+	'Banned' => 'Забанен',
+	'Active' => 'Активный',
+	'Registration Info' => 'Регистрационные данные',
+	'Test username' => 'Проверить логин',
+	'Test email' => 'Проверить e-mail',
+	'Generate password' => 'Сгенерировать пароль',
+	'Activity' => 'Активность',
+	'Ban' => 'Забанить',
+	'Send new password' => 'Выслать новый пароль пользователю',
+	'Profile Info' => 'Настройки профиля',
+	'Social Networks' => 'Социальные сети',
+	'Car requests' => 'Запросы в каталог',
+	'User' => 'Пользователь'
 ];

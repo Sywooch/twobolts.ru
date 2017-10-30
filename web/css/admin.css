@@ -477,3 +477,35 @@ td .thumbnail {
 .alert-dismissable .close, .alert-dismissible .close {
     right: -10px;
 }
+
+.panel-social .fa {
+    font-size: 4em;
+    line-height: 1;
+    color: #e1e1e1;
+}
+
+.panel-social .fa-vk.active {
+    color: #45668e;
+}
+
+.panel-social .fa-facebook.active {
+    color: #3b5998;
+}
+
+.panel-social .fa-twitter.active {
+    color: #00aced;
+}
+
+.panel-social .fa-google.active {
+    color: #dd4b39;
+}
+
+.car-request-index .list-group-item {
+    position: relative;
+}
+
+.car-request-index .list-group-item .action-cell {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}

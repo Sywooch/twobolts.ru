@@ -1287,6 +1287,16 @@ p.testimonials {
     color: #000000;
 }
 
+.profile-notification {
+    display: flex;
+    align-items: flex-start;
+    margin-top: 20px;
+}
+
+.profile-notification label {
+    font-size: 12px;
+}
+
 .my_profile_allview {
     width: 940px;
     margin: 10px;

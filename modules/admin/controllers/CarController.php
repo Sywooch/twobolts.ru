@@ -6,7 +6,6 @@ use app\models\Car;
 use app\models\CarSearch;
 use app\models\CarTechnical;
 use app\models\TechnicalCategory;
-use app\models\TechnicalOption;
 use Yii;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;

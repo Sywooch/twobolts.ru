@@ -6,9 +6,13 @@ use app\components\IconHelper;
 use app\models\Comparison;
 use app\models\Comment;
 use app\models\News;
+use app\models\User;
 use yii\helpers\Html;
 
 $counter = 0;
+
+Yii::$app->formatter->timeZone = User::identity()->timezone;
+
 ?>
 
 <?php if ($model->comments): ?>

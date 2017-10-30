@@ -9,6 +9,13 @@ use yii\helpers\Html;
 
 class ImageColumn extends DataColumn
 {
+	/**
+	 * @param mixed $model
+	 * @param mixed $key
+	 * @param int $index
+	 *
+	 * @return string
+	 */
     protected function renderDataCellContent($model, $key, $index)
     {
         if ($model->{$this->attribute}) {

@@ -159,6 +159,11 @@ class NewsController extends DefaultController
         ];
     }
 
+	/**
+	 * @param $id
+	 *
+	 * @return array
+	 */
     public function actionDeleteGalleryImage($id)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;

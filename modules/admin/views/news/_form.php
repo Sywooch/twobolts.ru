@@ -56,7 +56,7 @@ foreach ($model->models as $item)
 
     <?php $form = ActiveForm::begin([
         'options' => [
-                'enctype' => 'multipart/form-data'
+            'enctype' => 'multipart/form-data'
         ]
     ]); ?>
 

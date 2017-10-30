@@ -1,5 +1,5 @@
 <?php
-$params = require(__DIR__ . '/params.php');
+$params = require(__DIR__ . '/params_' . YII_ENV . '.php');
 
 $config = [
     'id' => 'basic',
@@ -19,7 +19,8 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'assetManager' => [
-            'appendTimestamp' => YII_ENV_DEV,
+            'appendTimestamp' => true,
+            'linkAssets' => true,
         ],
         'user' => [
             'identityClass' => 'app\models\User',
@@ -33,7 +34,16 @@ $config = [
             // send all mails to a file by default. You have to set
             // 'useFileTransport' to false and configure a transport
             // for the mailer to send real emails.
-            'useFileTransport' => true,
+            'useFileTransport' => $params['useFileTransport'],
+            'enableSwiftMailerLogging' => true,
+            'transport' => [
+	            'class' => 'Swift_SmtpTransport',
+	            'host' => 'mail.twobolts.ru',
+	            'username' => 'info@twobolts.ru',
+	            'password' => 'JvpMEyp4',
+	            'port' => '25',
+	            //'encryption' => 'tls',
+            ],
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
@@ -44,7 +54,7 @@ $config = [
                 ],
             ],
         ],
-        'db' => require(__DIR__ . '/db.php'),
+        'db' => require(__DIR__ . '/db_' . YII_ENV . '.php'),
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
@@ -53,7 +63,7 @@ $config = [
                 '<alias:index||faq|privacy-policy|terms-and-conditions|testimonials>' => 'site/<alias>',
                 '<alias:sign-in|sign-out|reset-password|recover-password|register>' => 'system/<alias>',
                 'profile/disconnect/<clientName:[A-Za-z0-9-_.]+>' => 'profile/disconnect',
-                'profile/<alias:save|recover-email|edit-password|favorites|delete-car>' => 'profile/<alias>',
+                'profile/<alias:save|recover-email|edit-password|favorites|delete-car|notification>' => 'profile/<alias>',
                 'profile/favorites/<username:[A-Za-z0-9-_.]+>' => 'profile/favorites',
                 'profile/<username:[A-Za-z0-9-_.]+>' => 'profile/view',
                 'comparison/view/<comparisonId:[A-Za-z0-9-_.]+>' => 'comparison/view',

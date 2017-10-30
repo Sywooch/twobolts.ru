@@ -13,12 +13,18 @@ use yii\web\UploadedFile;
 
 class UploaderController extends BaseController
 {
+	/**
+	 * Init
+	 */
     public function init()
     {
         parent::init();
         $this->enableCsrfValidation = false;
     }
 
+	/**
+	 * Upload
+	 */
     public function actionUpload()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -46,6 +52,9 @@ class UploaderController extends BaseController
         ]);
     }
 
+	/**
+	 * Crop
+	 */
     public function actionCrop()
     {
         $src = Yii::$app->request->post('src');

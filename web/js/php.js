@@ -67,8 +67,7 @@ var trim = function(str, charlist) {
     return whitespace.indexOf(str.charAt(0)) === -1 ? str : ''
 };
 
-function explode(delimiter, string, limit) 
-{
+function explode(delimiter, string, limit) {
 	if ( arguments.length < 2 || typeof delimiter === 'undefined' || typeof string === 'undefined' ) return null;
 	if ( delimiter === '' || delimiter === false || delimiter === null) return false;
 	if ( typeof delimiter === 'function' || typeof delimiter === 'object' || typeof string === 'function' || typeof string === 'object') {
@@ -101,8 +100,7 @@ function explode(delimiter, string, limit)
 	return s;
 }
 
-function stripos (f_haystack, f_needle, f_offset) 
-{
+function stripos (f_haystack, f_needle, f_offset) {
 	// From: http://phpjs.org/functions
 	// +     original by: Martijn Wieringa
 	// +      revised by: Onno Marsman
@@ -119,8 +117,7 @@ function stripos (f_haystack, f_needle, f_offset)
 	return false;
 }
 
-function str_repeat (input, multiplier) 
-{
+function str_repeat (input, multiplier) {
 	// From: http://phpjs.org/functions
 	// +   original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
 	// +   improved by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)

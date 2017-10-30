@@ -11,12 +11,14 @@ use yii\helpers\Html;
 
 $this->title = Yii::t('app/admin', 'Go admin') . ' - ' . Yii::t('app/admin', 'News');
 $this->params['breadcrumbs'][] = Yii::t('app/admin', 'News');
+
 ?>
+
 <div class="news-index">
 
-    <p class="pull-right"><?= Html::a(IconHelper::show('add') . Yii::t('app/admin', 'Create News'), ['create'], ['class' => 'btn btn-success']) ?></p>
+    <p class="pull-right"><?= Html::a(IconHelper::show('add') . Yii::t('app/admin', 'Create News'), ['create'], ['class' => 'btn btn-success']); ?></p>
 
-    <h1><?= Html::encode(Yii::t('app/admin', 'News')) ?></h1>
+    <h1><?= Html::encode(Yii::t('app/admin', 'News')); ?></h1>
 
     <div class="clear"></div>
 
@@ -113,7 +115,7 @@ $this->params['breadcrumbs'][] = Yii::t('app/admin', 'News');
                 'width' => '50%'
             ],
             [
-                'class' => UserColumn::class,
+                'class' => UserColumn::className(),
                 'attribute' => 'user_id',
                 'user_attribute' => 'user',
                 'width' => '200px'

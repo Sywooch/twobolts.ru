@@ -131,11 +131,12 @@ class CatalogController extends BaseController
             throw new NotFoundHttpException();
         }
 
-        //echo '<pre>'.print_r($car->getComments(), true);
-
         return $this->render('view', ['car' => $car]);
     }
 
+	/**
+	 * @return array
+	 */
     public function actionCarRequest()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;

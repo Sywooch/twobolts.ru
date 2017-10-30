@@ -88,7 +88,7 @@ $this->params['breadcrumbs'][] = Yii::t('app/admin', 'Models');
                 'order' => DynaGrid::ORDER_FIX_LEFT
             ],
             [
-                'class' => ImageColumn::class,
+                'class' => ImageColumn::className(),
                 'attribute' => 'image',
                 'contentOptions' => [
                     'class' => 'text-center'

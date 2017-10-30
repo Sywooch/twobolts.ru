@@ -1,6 +1,7 @@
 <?php
 
 namespace app\modules\admin;
+
 use app\models\User;
 use Yii;
 use yii\web\ForbiddenHttpException;
@@ -22,10 +23,7 @@ class AdminModule extends \yii\base\Module
     {
         parent::init();
 
-        /** @var User $user */
-        $user = Yii::$app->user->identity;
-
-        if (!$user || $user->role != User::ROLE_ADMIN) {
+        if (!User::identity() || !User::identity()->isAdmin()) {
             throw new ForbiddenHttpException();
         }
     }

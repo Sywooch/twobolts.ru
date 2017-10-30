@@ -23,14 +23,14 @@ class CarRequest extends UserDependency
 {
     public $updated_at;
 
-    public function __construct($config = [])
-    {
-        parent::__construct($config);
-
-        $this->status = false;
+	/**
+	 * Init model
+	 */
+    public function init() {
+	    $this->status = false;
     }
 
-    /**
+	/**
      * @inheritdoc
      */
     public function behaviors()
@@ -84,6 +84,17 @@ class CarRequest extends UserDependency
         ];
     }
 
+	/**
+	 * @return \yii\db\ActiveQuery
+	 */
+    public function getUser()
+    {
+    	return $this->hasOne(User::className(), ['id' => 'user_id']);
+    }
+
+	/**
+	 * Sends notification to admin
+	 */
     public function sendAdminNotification()
     {
         Yii::$app->mailer->compose('car_request', ['model' => $this])
@@ -91,5 +102,19 @@ class CarRequest extends UserDependency
             ->setTo(Yii::$app->params['adminEmail'])
             ->setSubject(Yii::$app->name . ' - ' . Yii::t('app/email', 'New car request'))
             ->send();
+    }
+
+	/**
+	 * Send email about approved request
+	 */
+    public function sendUserNotification()
+    {
+    	if ($this->user->email) {
+		    Yii::$app->mailer->compose('car_request_approved', ['model' => $this])
+			    ->setFrom(Yii::$app->params['adminEmail'])
+			    ->setTo($this->user->email)
+			    ->setSubject(Yii::$app->name . ' - ' . Yii::t('app/email', 'Car request approved'))
+			    ->send();
+	    }
     }
 }

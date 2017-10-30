@@ -84,9 +84,8 @@ class SocialAuthHandler
 				}
 			}
 		} else {
-			/** @var User $user */
 			/** @var User $registeredUser */
-			$user = Yii::$app->user->identity;
+			$user = User::identity();
 			$registeredUser = User::find()->where([$this->client->getId() . '_id' => $id])->one();
 
 			if ($registeredUser && $user->id != $registeredUser->id) {

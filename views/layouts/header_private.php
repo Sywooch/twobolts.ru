@@ -3,8 +3,8 @@ use app\models\User;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
-/** @var User $user */
-$user = Yii::$app->user->identity;
+$user = User::identity();
+
 ?>
 
 <div class="login-link">
@@ -15,9 +15,9 @@ $user = Yii::$app->user->identity;
         ); ?>
 </div>
 <div style="float:left; margin-left:40px; color:#fff;">
-    Привет, <span class="logged-user-name"><a href="/profile"><?= $user->username; ?></a></span>
+    Привет, <span class="logged-user-name"><?= Html::a($user->username, '/profile'); ?></span>
 </div>
 <span style="float:left; padding:0 5px;">|</span>
 <a href="#" id="signOff">Выход</a>
-<?= $user->role == User::ROLE_ADMIN ? Html::a(Yii::t('app', 'Admin link'), Url::to('/admin')) : ''; ?>
+<?= $user->isAdmin() ? Html::a(Yii::t('app', 'Admin link'), Url::to('/admin')) : ''; ?>
 </div>

@@ -1,7 +1,6 @@
 <?php
 namespace app\controllers;
 
-
 use app\components\ArrayHelper;
 use app\components\widgets\ComparisonList;
 use app\models\Car;
@@ -23,6 +22,9 @@ use yii\web\Response;
 
 class ComparisonController extends BaseController
 {
+	/**
+	 * @return array
+	 */
     public function behaviors()
     {
         return [
@@ -56,6 +58,9 @@ class ComparisonController extends BaseController
         ];
     }
 
+	/**
+	 * @return string
+	 */
     public function actionIndex()
     {
         $itemsCount = Comparison::getItemsCount();
@@ -75,6 +80,11 @@ class ComparisonController extends BaseController
         ]);
     }
 
+	/**
+	 * @param null $carId
+	 *
+	 * @return string
+	 */
     public function actionAdd($carId = null)
     {
         $car = null;
@@ -100,6 +110,9 @@ class ComparisonController extends BaseController
         ]);
     }
 
+	/**
+	 * @return array
+	 */
     public function actionExistComparison()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -130,11 +143,20 @@ class ComparisonController extends BaseController
         ];
     }
 
+	/**
+	 * @return array
+	 */
     public function actionFindItems()
     {
         return $this->renderItems();
     }
 
+	/**
+	 * @param $manufacturerId
+	 *
+	 * @return string
+	 * @throws NotFoundHttpException
+	 */
     public function actionManufacturer($manufacturerId)
     {
         /** @var $model Manufacturer */
@@ -165,11 +187,20 @@ class ComparisonController extends BaseController
         ]);
     }
 
+	/**
+	 * @return array
+	 */
     public function actionFindManufacturerItems()
     {
         return $this->renderItems('manufacturer');
     }
 
+	/**
+	 * @param null $modelId
+	 *
+	 * @return string
+	 * @throws NotFoundHttpException
+	 */
     public function actionModel($modelId = null)
     {
         /** @var $model Model */
@@ -200,11 +231,20 @@ class ComparisonController extends BaseController
         ]);
     }
 
+	/**
+	 * @return array
+	 */
     public function actionFindModelItems()
     {
         return $this->renderItems('model');
     }
 
+	/**
+	 * @param null $username
+	 *
+	 * @return string
+	 * @throws NotFoundHttpException
+	 */
     public function actionUser($username = null)
     {
         /** @var $model User */
@@ -235,11 +275,19 @@ class ComparisonController extends BaseController
         ]);
     }
 
+	/**
+	 * @return array
+	 */
     public function actionFindUserItems()
     {
         return $this->renderItems('user');
     }
-    
+
+	/**
+	 * @param string $pattern
+	 *
+	 * @return array
+	 */
     private function renderItems($pattern = '')
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -254,11 +302,11 @@ class ComparisonController extends BaseController
         $counter = 'get' . ucfirst($pattern) . 'ItemsCount';
         $getter = 'find' . ucfirst($pattern) . 'Items';
         if ($options) {
-            $itemsCount = call_user_func_array([Comparison::class, $counter], [$options]);
-            $items = call_user_func_array([Comparison::class, $getter], [$options, 0, $pageNum * ComparisonList::ITEMS_PER_PAGE, $sorting]);
+            $itemsCount = call_user_func_array([Comparison::className(), $counter], [$options]);
+            $items = call_user_func_array([Comparison::className(), $getter], [$options, 0, $pageNum * ComparisonList::ITEMS_PER_PAGE, $sorting]);
         } else {
-            $itemsCount = call_user_func([Comparison::class, $counter]);
-            $items = call_user_func_array([Comparison::class, $getter], [0, $pageNum * ComparisonList::ITEMS_PER_PAGE, $sorting]);
+            $itemsCount = call_user_func([Comparison::className(), $counter]);
+            $items = call_user_func_array([Comparison::className(), $getter], [0, $pageNum * ComparisonList::ITEMS_PER_PAGE, $sorting]);
         }
 
         $html = ComparisonList::widget([
@@ -274,6 +322,12 @@ class ComparisonController extends BaseController
         ];
     }
 
+	/**
+	 * @param null $comparisonId
+	 *
+	 * @return string
+	 * @throws NotFoundHttpException
+	 */
     public function actionView($comparisonId = null)
     {
         /** @var Comparison $comparison */
@@ -293,7 +347,10 @@ class ComparisonController extends BaseController
             'carCompareOptions' => $comparison->carCompare->getTechnicalOptions()
         ]);
     }
-    
+
+	/**
+	 * @return array
+	 */
     public function actionAddOpinion()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -325,6 +382,9 @@ class ComparisonController extends BaseController
         ];
     }
 
+	/**
+	 * @return array
+	 */
     public function actionAddFavorite()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -353,6 +413,9 @@ class ComparisonController extends BaseController
         ];
     }
 
+	/**
+	 * @return array
+	 */
     public function actionGetManufacturerModels()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -381,6 +444,9 @@ class ComparisonController extends BaseController
         ];
     }
 
+	/**
+	 * @return array
+	 */
     public function actionGetModel()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -408,6 +474,9 @@ class ComparisonController extends BaseController
         ];
     }
 
+	/**
+	 * Increase comparison views
+	 */
     public function actionUpdateViews()
     {
         $comparisonId = Yii::$app->request->post('comparisonId');
@@ -419,6 +488,9 @@ class ComparisonController extends BaseController
         }
     }
 
+	/**
+	 * @return array
+	 */
     public function actionAddModel()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;

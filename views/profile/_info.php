@@ -21,13 +21,15 @@ if ($user->profile) {
 }
 ?>
 
-<h2><?= $isOwn ? 'Мой профиль' : $user->username; ?></h2>
+<div class="body-content">
+    <h1><?= $isOwn ? 'Мой профиль' : $user->username; ?></h1>
+</div>
 
 <div class="my_profile_allview">
     <div class="left_clmn">
         <div class="avat_pls_nm profile_left_block_avatar ">
             <div class="avat_50">
-                <?= Html::img(\app\models\User::getDefaultAvatar($user->avatar),
+                <?= Html::img(User::getDefaultAvatar($user->avatar),
                     ['width' => 50]
                 ); ?>
             </div>

@@ -20,6 +20,7 @@ use yii\helpers\Html;
  * @property string $zip_code
  * @property string $phone
  * @property string $about
+ * @property bool $notification
  *
  * @property User $user
  */
@@ -40,11 +41,10 @@ class UserProfile extends UserDependency
     {
         return [
             [['last_name', 'first_name', 'city', 'address', 'zip_code', 'phone', 'about'], 'safe'],
+	        [['notification'], 'boolean'],
             [['about'], 'string', 'max' => 2048],
-            [['country', 'phone'], 'string', 'max' => 20],
-            [['website', 'address'], 'string', 'max' => 255],
-            [['last_name', 'first_name', 'city'], 'string', 'max' => 100],
-            [['zip_code'], 'string', 'max' => 10],
+            [['country', 'phone', 'website', 'address'], 'string', 'max' => 255],
+            [['last_name', 'first_name', 'city', 'zip_code'], 'string', 'max' => 10],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
             [['country', 'city', 'about'], 'filter', 'filter' => '\yii\helpers\HtmlPurifier::process'],
         ];
@@ -67,9 +67,15 @@ class UserProfile extends UserDependency
             'zip_code' => Yii::t('app', 'Zip Code'),
             'phone' => Yii::t('app', 'Phone'),
             'about' => Yii::t('app', 'About self'),
+	        'notification' => Yii::t('app', 'Get new notifications on email')
         ];
     }
 
+	/**
+	 * @param string $wrapTag
+	 *
+	 * @return string
+	 */
     public function getFullLocation($wrapTag = '')
     {
         $result = [];
@@ -87,5 +93,21 @@ class UserProfile extends UserDependency
         }
 
         return $wrapTag ? Html::tag($wrapTag, implode(', ', $result)) : implode(', ', $result);
+    }
+
+	/**
+	 * @return string
+	 */
+    public function getFullName()
+    {
+    	$name = $this->last_name;
+
+    	if ($this->first_name) {
+    		$name .= ' ';
+	    }
+
+	    $name .= $this->last_name;
+
+    	return $name;
     }
 }

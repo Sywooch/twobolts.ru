@@ -2,6 +2,8 @@
 
 namespace app\models;
 
+use app\components\ArrayHelper;
+use app\components\ImageHelper;
 use app\components\SocialAuthHandler;
 use OAuth;
 use PasswordHash;
@@ -13,9 +15,9 @@ use yii\authclient\clients\VKontakte;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Query;
-use yii\helpers\BaseUrl;
 use yii\helpers\Html;
 use yii\web\IdentityInterface;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "users".
@@ -69,12 +71,16 @@ class User extends ActiveRecord implements IdentityInterface
 
     public $newPassword;
     public $confirmPassword;
+    public $sendNewPassword;
     public $rememberMe;
+	public $name;
 
     protected static $cache = [];
     protected static $roles = [];
     
     const ROLE_ADMIN = 10;
+	const ROLE_USER = 1;
+
     const PROFILE_COMPARISONS_PER_PAGE = 4;
 
     /**
@@ -96,13 +102,18 @@ class User extends ActiveRecord implements IdentityInterface
             [['password', 'confirmPassword'], 'required', 'on' => ['recover']],
             [['username', 'password'], 'required', 'on' => ['login']],
             ['email', 'email', 'skipOnEmpty' => true],
-            ['email', 'unique', 'on' => ['register', 'edit-email', 'recover-email']],
-            [['activated', 'banned', 'role', 'karma'], 'integer'],
+            ['email', 'unique', 'on' => ['register', 'edit-email', 'recover-email', 'create']],
+            [['activated', 'banned', 'role', 'karma', 'sendNewPassword'], 'integer'],
             [['new_password_requested', 'last_login', 'created', 'modified', 'hash_created'], 'safe'],
             [['vkontakte_token', 'odnoklassniki_token', 'facebook_token', 'twitter_token', 'google_token', 'avatar', 'uploaded_avatar', 'hash'], 'string'],
             [['username', 'new_password_key', 'new_email_key'], 'string', 'max' => 50],
             [['password', 'ban_reason'], 'string', 'max' => 255],
             [['email', 'new_email', 'timezone', 'vkontakte_id', 'odnoklassniki_id', 'facebook_id', 'twitter_id', 'google_id'], 'string', 'max' => 100],
+
+	        [['newPassword'], 'required', 'on' => ['create']],
+	        [['newPassword'], 'safe', 'on' => ['update']],
+	        [['username', 'email'], 'required', 'on' => ['create']],
+	        [['username'], 'string', 'min' => 3, 'on' => ['create', 'update']],
 
             [['username'], 'filter', 'filter' => '\yii\helpers\HtmlPurifier::process'],
             ['username', 'compare', 'compareValue' => 'save', 'operator' => '!='],
@@ -148,20 +159,20 @@ class User extends ActiveRecord implements IdentityInterface
             'password' => Yii::t('app', 'Password'),
             'confirmPassword' => Yii::t('app', 'Confirm Password'),
             'email' => Yii::t('app', 'E-mail'),
-            'activated' => 'Activated',
-            'banned' => 'Banned',
-            'ban_reason' => 'Ban Reason',
+            'activated' => Yii::t('app', 'Activated'),
+            'banned' => Yii::t('app', 'Banned'),
+            'ban_reason' => Yii::t('app', 'Ban Reason'),
             'new_password_key' => 'New Password Key',
             'new_password_requested' => 'New Password Requested',
             'new_email' => 'New Email',
             'new_email_key' => 'New Email Key',
-            'last_ip' => 'Last Ip',
-            'last_login' => 'Last Login',
-            'created' => 'Created',
-            'modified' => 'Modified',
-            'role' => 'Role',
-            'timezone' => 'Timezone',
-            'karma' => 'Karma',
+            'last_ip' => Yii::t('app', 'Last Ip'),
+            'last_login' => Yii::t('app', 'Last Login'),
+            'created' => Yii::t('app', 'Registered'),
+            'modified' => Yii::t('app', 'Modified'),
+            'role' => Yii::t('app', 'Role'),
+            'timezone' => Yii::t('app', 'Timezone'),
+            'karma' => Yii::t('app', 'Karma'),
             'vkontakte_id' => 'Vkontakte ID',
             'vkontakte_token' => 'Vkontakte Token',
             'odnoklassniki_id' => 'Odnoklassniki ID',
@@ -172,11 +183,24 @@ class User extends ActiveRecord implements IdentityInterface
             'twitter_token' => 'Twitter Token',
             'google_id' => 'Google ID',
             'google_token' => 'Google Token',
-            'avatar' => 'Avatar',
+            'avatar' => Yii::t('app', 'Avatar'),
             'uploaded_avatar' => 'Uploaded Avatar',
             'hash' => 'Hash',
             'hash_created' => 'Hash Created',
+
+	        'newPassword' => Yii::t('app', 'New Password')
         ];
+    }
+
+	/**
+	 * @return User
+	 */
+    public static function identity()
+    {
+	    /** @var User $user */
+	    $user = Yii::$app->user->identity;
+
+	    return $user;
     }
 
 	/**
@@ -223,11 +247,30 @@ class User extends ActiveRecord implements IdentityInterface
         return false;
     }
 
-    /**
-     * @return UserProfile
-     */
-    public function createProfile()
+	/**
+	 * @param null $data
+	 *
+	 * @return UserProfile|bool
+	 */
+    public function createProfile($data = null)
     {
+    	if ($this->scenario == 'create') {
+    		Yii::$app->db->createCommand()->insert(UserProfile::tableName(), [
+    			'user_id' => $this->id,
+			    'country' => ArrayHelper::getValue($data, 'country', ''),
+			    'website' => ArrayHelper::getValue($data, 'website', ''),
+			    'last_name' => ArrayHelper::getValue($data, 'last_name', ''),
+			    'first_name' => ArrayHelper::getValue($data, 'first_name', ''),
+			    'city' => ArrayHelper::getValue($data, 'city', ''),
+			    'address' => ArrayHelper::getValue($data, 'address', ''),
+			    'zip_code' => ArrayHelper::getValue($data, 'zip_code', ''),
+			    'phone' => ArrayHelper::getValue($data, 'phone', ''),
+			    'about' => ArrayHelper::getValue($data, 'about', ''),
+		    ])->execute();
+
+    		return true;
+	    }
+
         $profile = new UserProfile();
         $profile->user_id = $this->id;
         $profile->save();
@@ -360,6 +403,7 @@ class User extends ActiveRecord implements IdentityInterface
         if (!isset(self::$cache[$id])) {
             self::$cache[$id] = self::findUser($id);
         }
+
         return self::$cache[$id];
     }
 
@@ -371,11 +415,6 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $query = self::find();
         $user = $query->where(['id' => $id])->one();
-
-        if (!$user) {
-            $user = new self();
-            $user->id = -1;
-        }
 
         return $user;
     }
@@ -433,7 +472,7 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
 	/**
-	 *
+	 * Hash password
 	 */
     public function hashPassword()
     {
@@ -640,8 +679,32 @@ class User extends ActiveRecord implements IdentityInterface
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
-            if ($insert) {
+            if ($insert && $this->scenario == 'register') {
                 $this->hashPassword();
+            }
+
+            if (($insert && $this->scenario == 'create') || $this->scenario == 'update') {
+	            if ($this->newPassword) {
+		            $this->password = $this->newPassword;
+		            $this->hashPassword();
+
+		            if ($this->sendNewPassword) {
+			            Yii::$app->mailer->compose('new_password', ['user' => $this, 'password' => $this->newPassword])
+				            ->setFrom(Yii::$app->params['adminEmail'])
+				            ->setTo($this->email)
+				            ->setSubject(Yii::$app->name . ' - ' . Yii::t('app', 'New Password'))
+				            ->send();
+		            }
+	            }
+
+	            $avatar = UploadedFile::getInstance($this, 'avatar');
+	            if ($avatar) {
+	            	$avatarFile = md5(time());
+		            $avatar->saveAs('uploads/avatars/' . $avatarFile . '.' . $avatar->extension);
+		            ImageHelper::crop('/uploads/avatars/' . $avatarFile . '.' . $avatar->extension, 200, 200);
+
+		            $this->avatar = $avatarFile . '.' . $avatar->extension;
+	            }
             }
 
             return true;
@@ -650,7 +713,31 @@ class User extends ActiveRecord implements IdentityInterface
         return false;
     }
 
-    /**
+	/**
+	 * @return bool
+	 */
+    public function beforeDelete()
+    {
+	    $this->deleteAvatarFile();
+
+	    $profile = $this->profile;
+
+	    if ($profile instanceof UserProfile) {
+		    $profile->delete();
+	    }
+
+	    return parent::beforeDelete();
+    }
+
+	/**
+	 * Deletes avatar file
+	 */
+    public function deleteAvatarFile()
+    {
+	    @unlink(Yii::getAlias('@webroot') . '/uploads/avatars/' . $this->avatar);
+    }
+
+	/**
      * @param Comment $comment
      * @return bool
      */
@@ -704,5 +791,34 @@ class User extends ActiveRecord implements IdentityInterface
         }
 
         return $query->orderBy(['LOWER(username)' => SORT_ASC])->all();
+    }
+
+	/**
+	 * @return array
+	 */
+    public static function getRoles()
+    {
+	    return [
+		    self::ROLE_ADMIN => Yii::t('app', 'Administrator'),
+		    self::ROLE_USER => Yii::t('app', 'User')
+	    ];
+    }
+
+	/**
+	 * @return mixed
+	 */
+    public function getRoleName()
+    {
+    	$roles = self::getRoles();
+
+    	return $roles[$this->role];
+    }
+
+	/**
+	 * @return bool
+	 */
+    public function isAdmin()
+    {
+    	return $this->role == self::ROLE_ADMIN;
     }
 }

@@ -9,6 +9,7 @@ use yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 class ProfileController extends BaseController
@@ -49,16 +50,14 @@ class ProfileController extends BaseController
 	 */
     public function actionIndex()
     {
-        /** @var User $user */
-        $user = Yii::$app->user->identity;
-
-        return $this->renderProfile('index', $user);
+        return $this->renderProfile('index', User::identity());
     }
 
 	/**
 	 * @param $username
 	 *
 	 * @return string
+	 * @throws NotFoundHttpException
 	 */
     public function actionView($username)
     {
@@ -67,6 +66,10 @@ class ProfileController extends BaseController
         } else {
             $user = User::findByUsername($username);
         }
+
+	    if (!$user) {
+		    throw new NotFoundHttpException(Yii::t('app/error', 'User not found'));
+	    }
 
         return $this->renderProfile('view', $user);
     }
@@ -116,9 +119,8 @@ class ProfileController extends BaseController
     public function actionSave()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        
-        /** @var User $user */
-        $user = Yii::$app->user->identity;
+
+        $user = User::identity();
         $user->scenario = Yii::$app->request->post('scenario');
         $postData = Yii::$app->request->post('User');
         $email = ArrayHelper::getValue($postData, 'email');
@@ -139,6 +141,10 @@ class ProfileController extends BaseController
             }
         } elseif ($user->scenario == 'edit-profile') {
             if ($user->profile->load(Yii::$app->request->post()) && $user->profile->save()) {
+            	$user->updateAttributes([
+            		'timezone' => Yii::$app->request->post('timezone', 'Europe/Moscow')
+	            ]);
+
                 return [
                     'message' => Yii::t('app', 'Profile saved successfully')
                 ];
@@ -166,8 +172,7 @@ class ProfileController extends BaseController
 	 */
     public function actionRecoverEmail()
     {
-        /** @var User $user */
-        $user = Yii::$app->user->identity;
+        $user = User::identity();
         $user->scenario = 'recover-email';
 
         if (Yii::$app->request->isPost) {
@@ -201,10 +206,8 @@ class ProfileController extends BaseController
     public function actionEditPassword()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        
-        /** @var User $user */
-        $user = Yii::$app->user->identity;
 
+        $user = User::identity();
         $passwordUser = new User();
         $passwordUser->scenario = 'edit-password';
 
@@ -291,14 +294,23 @@ class ProfileController extends BaseController
 	 */
     public function actionDisconnect($clientName)
     {
-    	/** @var User $user */
-    	$user = Yii::$app->user->identity;
-
-    	$user->updateAttributes([
+    	User::identity()->updateAttributes([
 		    $clientName . '_id' => '',
 		    $clientName . '_token' => ''
 	    ]);
 
     	return $this->redirect('/profile');
+    }
+
+	/**
+	 * Update profile notification
+	 */
+    public function actionNotification()
+    {
+    	$status = Yii::$app->request->post('status', 0);
+
+    	User::identity()->profile->updateAttributes([
+    		'notification' => $status
+	    ]);
     }
 }

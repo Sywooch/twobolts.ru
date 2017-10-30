@@ -43,11 +43,18 @@ class ImageHelper
     public static function getImageFile($model, $attribute, $fullPath = false)
     {
         if ($model->{$attribute}) {
-            $imageFile = $model->getUploadUrl($attribute);
+	        // without behavior
+	        $file = Yii::getAlias('@webroot') . '/uploads/avatars/' . $model->{$attribute};
 
-            if (!is_file(Yii::getAlias('@webroot') . $imageFile)) {
-                $imageFile = $model->{$attribute};
-            }
+	        if (@file_get_contents($file)) {
+		        $imageFile = '/uploads/avatars/' . $model->{$attribute};
+	        } else {
+		        $imageFile = $model->getUploadUrl($attribute);
+
+		        if (!is_file(Yii::getAlias('@webroot') . $imageFile)) {
+			        $imageFile = $model->{$attribute};
+		        }
+	        }
 
             return $fullPath ? Yii::getAlias('@webroot') . $imageFile : $imageFile;
         }
@@ -127,5 +134,55 @@ class ImageHelper
         }
 
         return false;
+    }
+
+	/**
+	 * @param $source
+	 * @param $cropWidth
+	 * @param $cropHeight
+	 * @param null $x
+	 * @param null $y
+	 * @param bool $resize
+	 */
+    public static function crop($source, $cropWidth, $cropHeight, $x = null, $y = null, $resize = true)
+    {
+	    $imagine = new Imagine();
+
+	    $image = $imagine->open(Yii::getAlias('@webroot') . $source);
+	    $width = $image->getSize()->getWidth();
+	    $height = $image->getSize()->getHeight();
+
+	    if ($resize) {
+		    $ratio = $width / $cropWidth;
+		    $height = round($height / $ratio);
+		    $width = $cropWidth;
+
+		    if ($height < $cropHeight) {
+			    $ratio = $height / $cropHeight;
+			    $height = $cropHeight;
+			    $width = round($width / $ratio);
+		    }
+
+		    $image->resize(new Box($width, $height));
+	    }
+
+	    if (is_null($x)) {
+		    if ($width > $cropWidth) {
+			    $x = ($width - $cropWidth) / 2;
+		    } else {
+		    	$x = 0;
+		    }
+	    }
+
+	    if (is_null($y)) {
+		    if ($height > $cropHeight) {
+			    $y = ($height - $cropHeight) / 2;
+		    } else {
+		    	$y = 0;
+		    }
+	    }
+
+	    $image->crop(new Point($x, $y), new Box($cropWidth, $cropHeight));
+	    $image->save(Yii::getAlias('@webroot') . $source);
     }
 }

@@ -37,7 +37,8 @@
         "cics/yii2-video-embed-widget": "dev-master",
         "mongosoft/yii2-upload-behavior": "*",
         "kartik-v/yii2-tabs-x": "@dev",
-        "2amigos/yii2-transliterator-helper": "*"
+        "2amigos/yii2-transliterator-helper": "*",
+        "kartik-v/yii2-checkbox-x": "*"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

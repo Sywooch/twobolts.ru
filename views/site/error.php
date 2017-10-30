@@ -8,7 +8,7 @@
 use app\components\IconHelper;
 use yii\helpers\Html;
 
-$this->title = $exception->getMessage();
+$this->title = Yii::t('app/error', 'Error code {code}', ['code' => $exception->statusCode]) . ' — ' . Yii::$app->params['siteTitle'];
 
 //echo '<pre>' . print_r($exception, true);
 
@@ -25,7 +25,7 @@ switch ($exception->statusCode) {
             </div>
 
             <div class="col-md-9">
-                <h1 style="padding-top: 0; text-align: left"><?= Html::encode($this->title) ?></h1>
+                <h1 style="padding: 0; text-align: left"><?= Html::encode($exception->getMessage()) ?></h1>
 
                 <h3 style="text-align:left;"><?= Yii::t('app/error', 'Error code {code}', ['code' => $exception->statusCode])?></h3>
 

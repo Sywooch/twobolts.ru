@@ -75,7 +75,10 @@ $carRequests = CarRequest::find()->where(['status' => false])->count();
 
         <?= Html::a(IconHelper::show('setting') . Yii::t('app/admin', 'Go admin'), UrlHelper::absolute('admin'), ['class' => 'btn btn-default']); ?>
 
-        <?= $carRequests ? Html::a('Запрос в каталог <span class="badge">' . $carRequests . '</span>', UrlHelper::absolute('admin/catalog/requests'), ['class' => 'btn btn-danger']) : ''; ?>
+        <?= $carRequests ?
+            Html::a('Запрос в каталог <span class="badge car-request-counter">' . $carRequests . '</span>', UrlHelper::absolute('admin/catalog/requests'), ['class' => 'btn btn-danger'])
+            : '';
+        ?>
 
         <?= Html::a(IconHelper::show('exit') . Yii::t('app', 'Exit'), UrlHelper::absolute('admin/sign-out'), ['class' => 'btn btn-default pull-right']); ?>
     </header>

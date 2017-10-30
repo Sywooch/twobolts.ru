@@ -54,7 +54,8 @@ class DefaultController extends Controller
      * @param $id
      * @return mixed|ActiveRecord
      */
-    protected function findModel($id) {
-        return null;
+    protected function findModel($id)
+    {
+    	return null;
     }
 }

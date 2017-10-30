@@ -23,15 +23,30 @@ var emailPattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\
     isAdmin = false,
     newsCount,
     newsPage,
-    newsPerPage;
+    newsPerPage,
+
+	Main = {
+        /**
+         * Init of object
+         */
+        init: function () {
+            var self = this;
+
+            $.getScript('/js/user.js', function () {
+                User.init();
+            });
+        }
+	};
 
 $(function() {
+	Main.init();
+
     showVisible();
 
     var $body = $('body');
 
     $body.on("ajaxSend", function(elm, xhr, s) {
-        if (s.type == "POST") {
+        if (s.type === "POST") {
             xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr("content"));
         }
     });
@@ -353,6 +368,12 @@ $(function() {
         signinUser();
     });
 
+    $('#signin_password, #signin_login').on('keyup', function (e) {
+        if (e.which === 13) {
+            signinUser();
+        }
+    });
+
     $('.btnRecover').on('click', function () {
         resetPassword();
     });
@@ -475,7 +496,7 @@ $(function() {
 	$('.catalog-btn-view-all a').on('click', function() {
 		$('.catalog-popular-list, .catalog-all-list').slideToggle();
 
-		if ($('.catalog-all-list').text() == 'популярные') {
+		if ($('.catalog-all-list').text() === 'популярные') {
 			$(this).text('все марки');
 		} else {
 			$(this).text('популярные');
@@ -703,7 +724,7 @@ var editPassword = function () {
         return;
     }
 
-    if (newPassword.val() != confirmPassword.val()) {
+    if (newPassword.val() !== confirmPassword.val()) {
         newPassword.addClass('input_error');
         confirmPassword.addClass('input_error');
         passwordDlg.find('.modal-footer .btn-group').prepend('<div class="response-text text-danger">Пароли не совпадают</div>');
@@ -783,6 +804,7 @@ var editProfile = function() {
     $('.response-text').remove();
 
     var profileDlg = $('#profileDlg'),
+        timezone = $('#timezone'),
         city = $('#city'),
         country = $('#country'),
         about = $('#about'),
@@ -801,6 +823,7 @@ var editProfile = function() {
                 city: city.val(),
                 about: about.val()
             },
+            timezone: timezone.val(),
             scenario: 'edit-profile'
         },
         success: function(response) {
@@ -838,7 +861,7 @@ var showCropper = function(elem, response) {
     $(elem + " form[target^='iframe']")[0].reset();
     ajaxSpinner.stop(true);
 
-    if (data.resultCode == 'failed') {
+    if (data.resultCode === 'failed') {
         showMessage(data.result.imageFile.join('<br>'), localizationMessages['error']);
         return;
     }
@@ -900,7 +923,7 @@ var showAvatarCropper = function (elem, response) {
     $(elem + " form[target^='iframe']")[0].reset();
     ajaxSpinner.stop();
 
-    if (data.resultCode == 'failed') {
+    if (data.resultCode === 'failed') {
         showMessage(data.result.imageFile.join('<br>'), 'Ошибка!');
         return;
     }
@@ -985,7 +1008,7 @@ var manufacturerChange = function(holder) {
 	$('.comparison-add-point-handler').removeClass('active');
 	$('#comare_values').slideUp();
 	
-	if (_manufacturer.val() != 0) {
+	if (_manufacturer.val() !== 0) {
 	    ajaxSpinner.add(
 	        _manufacturer,
             'medium',
@@ -1047,7 +1070,7 @@ var modelChange = function(holder) {
 	$('.comparison-add-point-handler').removeClass('active');
 	$('#comare_values').slideUp();
 	
-	if (_model.val() != 0) {
+	if (_model.val() !== 0) {
         ajaxSpinner.add(
             _model,
             'medium',

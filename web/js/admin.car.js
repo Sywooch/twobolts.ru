@@ -25,6 +25,16 @@ var car = {
         var self = this,
             body = $('body');
 
+        $('.btn-delete-request').on('click', function (e) {
+            e.preventDefault();
+            self.processRequest($(this), 'delete-request');
+        });
+
+        $('.btn-approve-request').on('click', function (e) {
+            e.preventDefault();
+            self.processRequest($(this), 'approve-request');
+        });
+
         self.manufacturerSelector.on('change', function () {
             self.loadModels();
         });
@@ -161,5 +171,37 @@ var car = {
                 }
             });
         }
+    },
+
+    /**
+     *
+     * @param elem
+     * @param action
+     */
+    processRequest: function (elem, action) {
+        var counterElem = $('.car-request-counter'),
+            data,
+            counter;
+
+        $.ajax({
+            url: baseURL + 'admin/catalog/' + action + '?id=' + elem.parents('.list-group-item').data('key'),
+            async: true,
+            type: 'POST',
+            dataType: 'html',
+            success: function (response) {
+                data = $.parseJSON(response);
+
+                if (data.status === 'ok') {
+                    elem.parents('.list-group-item').remove();
+                    counter = parseInt(counterElem.text()) - 1;
+
+                    if (counter === 0) {
+                        counterElem.parents('.btn').remove();
+                    } else {
+                        counterElem.text(counter);
+                    }
+                }
+            }
+        });
     }
 };

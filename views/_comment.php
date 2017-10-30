@@ -3,12 +3,14 @@
 /** @var User $user */
 /** @var int $counter */
 
+use app\components\TimeZoneHelper;
 use app\components\widgets\UserLink;
 use app\models\Comment;
 use app\models\Comparison;
 use app\models\User;
 
-$user = Yii::$app->user->identity;
+$user = User::identity();
+
 ?>
 
 <div class="user-comment-wrapper <?= $counter > Comment::COMMENTS_PER_PAGE ? 'hidden' : ''; ?> <?= $counter == 0 ? 'new-comment' : ''; ?>">
@@ -19,7 +21,7 @@ $user = Yii::$app->user->identity;
 
         <div data-username="<?= $model->user->username; ?>" data-id="<?= $model->id; ?>" data-user="<?= $model->user_id; ?>" data-model="<?= $model->object_id; ?>">
             <span class="user-comment-date">
-                <?= Yii::$app->formatter->asDatetime($model->created, 'd MMMM yyyy в HH:mm'); ?>
+                <?= Yii::$app->formatter->asDatetime(TimeZoneHelper::timezoneDate($model->created), 'd MMMM yyyy в HH:mm'); ?>
             </span>
 
             <?php if (!Yii::$app->user->isGuest): ?>

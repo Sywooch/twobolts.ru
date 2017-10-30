@@ -142,9 +142,7 @@ class Comparison extends UserDependency
             ->addSelect('cc.*, ' . self::getQueryRating() . ' as calculatedRating, ' . self::getQueryComments() . ' as calculatedComments')
             ->from(self::tableName() . ' AS cc');
 
-        /** @var User $user */
-        $user = Yii::$app->user->identity;
-        if ($activeOnly || $user->role != User::ROLE_ADMIN) {
+        if ($activeOnly || User::identity()->isAdmin()) {
             $query->andWhere(['cc.active' => 1]);
         }
 
@@ -897,8 +895,7 @@ class Comparison extends UserDependency
         $garage = $postData['garage'];
         $before = $postData['before'];
 
-        /** @var User $user */
-        $user = Yii::$app->getUser()->identity;
+        $user = User::identity();
         if ($garage) {
             $user->updateCar(${'car'.ucfirst($garage)}->id, 'garage', $model->{$garage . '_foto'});
         }

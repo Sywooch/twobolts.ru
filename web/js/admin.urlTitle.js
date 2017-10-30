@@ -1,4 +1,7 @@
 var urlTitle = {
+    /**
+     * Init
+     */
     init: function () {
         var self = this;
 
@@ -8,6 +11,10 @@ var urlTitle = {
         });
     },
 
+    /**
+     *
+     * @param elem
+     */
     getTitle: function (elem) {
         var self = this,
             target = $(elem.data('target')),
@@ -17,7 +24,7 @@ var urlTitle = {
 
         if (source.length) {
             $.each(source, function () {
-                if ($(this).prop('tagName').toLowerCase() == 'select') {
+                if ($(this).prop('tagName').toLowerCase() === 'select') {
                     sourceString.push($(this).find('option:selected').text());
                 } else {
                     sourceString.push($(this).val());
@@ -47,11 +54,16 @@ var urlTitle = {
         }
     },
 
+    /**
+     *
+     * @param target
+     * @param value
+     */
     setValue: function (target, value) {
         var self = this,
             tagName = target.prop('tagName').toLowerCase();
 
-        if (tagName == 'input' || tagName == 'textarea') {
+        if (tagName === 'input' || tagName === 'textarea') {
             target.val(value['full']);
         } else {
             target.text(value['full']);

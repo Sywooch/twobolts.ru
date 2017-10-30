@@ -98,7 +98,7 @@ Modal::begin([
                 'placeholder' => Yii::t('app', 'Enter Email')
             ]
         ); ?>
-        <p class="fnErrorMsg">Неверный e-mail.</p>
+        <p class="fnErrorMsg">Неверная электронная почта.</p>
 
         <?= Html::passwordInput(
             'register_password',

@@ -27,10 +27,9 @@ $comparisons = $car->getComparisons(
 );
 
 $comments = $car->getComments();
-
-$user = Yii::$app->user->identity;
-
+$user = User::identity();
 $news = $car->getNews();
+
 ?>
 
 <div class="catalog-view inside height-wrapper">
