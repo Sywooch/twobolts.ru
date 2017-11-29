@@ -30,10 +30,10 @@ class ComparisonController extends BaseController
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['add', 'add-model'],
+                'only' => ['add-model'],
                 'rules' => [
                     [
-                        'actions' => ['add', 'add-model'],
+                        'actions' => ['add-model'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -97,6 +97,14 @@ class ComparisonController extends BaseController
             }
         }
 
+        $carRequest = new CarRequest();
+        $comparisonData = Yii::$app->session->get('comparisonData');
+	    $carData = Yii::$app->session->get('carRequest');
+
+        if ($carData) {
+	        $carRequest->load(['CarRequest' => $carData]);
+        }
+
         return $this->render('add', [
             'manufacturers' => Manufacturer::find()
                 ->joinWith('cars', true, 'INNER JOIN')
@@ -105,8 +113,9 @@ class ComparisonController extends BaseController
                 ->asArray()
                 ->all(),
             'car' => $car,
-            'carRequest' => new CarRequest(),
-            'criteria' => ComparisonCriteria::find()->orderBy(['sort_order' => SORT_ASC])->all()
+            'carRequest' => $carRequest,
+            'criteria' => ComparisonCriteria::find()->orderBy(['sort_order' => SORT_ASC])->all(),
+	        'comparisonData' => $comparisonData
         ]);
     }
 
@@ -508,9 +517,18 @@ class ComparisonController extends BaseController
                 'error' => ArrayHelper::toString($errors)
             ];
         }
+
+        Yii::$app->session->set('comparisonData', null);
+
         return [
             'status' => 'ok'
         ];
+    }
+
+    public function actionSaveData()
+    {
+	    Yii::$app->session->set('comparisonData', Yii::$app->request->post('comparisonData'));
+	    Yii::$app->session->set('carRequest', Yii::$app->request->post('carRequest'));
     }
 
     /**

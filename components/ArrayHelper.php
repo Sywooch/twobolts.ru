@@ -1,16 +1,19 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: rzyuzin
- * Date: 18.07.2016
- * Time: 17:43
- */
 
 namespace app\components;
 
-
+/**
+ * Class ArrayHelper
+ * @package app\components
+ */
 class ArrayHelper extends \yii\helpers\ArrayHelper
 {
+	/**
+	 * @param $haystack
+	 * @param string $delimiter
+	 *
+	 * @return string
+	 */
     public static function toString($haystack, $delimiter = '; ')
     {
         $result = [];
@@ -27,4 +30,24 @@ class ArrayHelper extends \yii\helpers\ArrayHelper
 
         return implode($delimiter, $result);
     }
+
+	/**
+	 * Рекурсивный поиск элемента массива по значению
+	 *
+	 * @param string $needle
+	 * @param array $haystack
+	 * @return bool|int|string
+	 */
+	public static function elementByValue($needle, $haystack)
+	{
+		foreach ($haystack as $key => $value)
+		{
+			$currentKey = $key;
+			if ($needle === $value || (is_array($value) && self::elementByValue($needle, $value) !== false)) {
+				return $currentKey;
+			}
+		}
+
+		return false;
+	}
 }

@@ -1,6 +1,6 @@
 <?php
 return [
-    'This e-mail is notification of the following recent change to your {app_name} account' => 'Данное письмо является увеодмлением о недавних действиях на сайте {app_name}:',
+    'This e-mail is notification of the following recent change to your {app_name} account' => 'Данное письмо является уведомлением о недавних действиях на сайте {app_name}:',
     'New password requested for account' => 'Для вашего профиля было запрошено восстановление пароля.',
     'Go to reset password link' => 'Для продолжения данной операции перейдите по',
     'address link' => 'ссылке',

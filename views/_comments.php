@@ -3,6 +3,7 @@
 /** @var Comparison|News $model */
 
 use app\components\IconHelper;
+use app\components\TimeZoneHelper;
 use app\models\Comparison;
 use app\models\Comment;
 use app\models\News;
@@ -11,7 +12,7 @@ use yii\helpers\Html;
 
 $counter = 0;
 
-Yii::$app->formatter->timeZone = User::identity()->timezone;
+Yii::$app->formatter->timeZone = User::identity() ? User::identity()->timezone : TimeZoneHelper::DEFAULT_TIMEZONE;
 
 ?>
 

@@ -854,14 +854,14 @@ class Comparison extends UserDependency
     public static function add($postData)
     {
         $carMain = Car::findByParts(
-            $postData['mainManufacturerID'],
-            $postData['mainModelID'],
-            $postData['mainEngineID']
+            $postData['mainManufacturerId'],
+            $postData['mainModelId'],
+            $postData['mainEngineId']
         );
         $carCompare = Car::findByParts(
-            $postData['compareManufacturerID'],
-            $postData['compareModelID'],
-            $postData['compareEngineID']
+            $postData['compareManufacturerId'],
+            $postData['compareModelId'],
+            $postData['compareEngineId']
         );
 
         if ($carMain == null || $carCompare == null) {
@@ -892,15 +892,20 @@ class Comparison extends UserDependency
         $model->main_time = $postData['mainTime'];
         $model->compare_time = $postData['compareTime'];
 
-        $garage = $postData['garage'];
-        $before = $postData['before'];
+        $garage = ArrayHelper::getValue($postData, 'garage');
+        $before = ArrayHelper::getValue($postData, 'before');
 
         $user = User::identity();
         if ($garage) {
-            $user->updateCar(${'car'.ucfirst($garage)}->id, 'garage', $model->{$garage . '_foto'});
+        	foreach ($garage as $garageItem) {
+		        $user->updateCar(${'car' . ucfirst($garageItem)}->id, 'garage', $model->{$garageItem . '_foto'});
+	        }
         }
         if ($before) {
-            $user->updateCar(${'car'.ucfirst($before)}->id, 'before', $model->{$before . '_foto'});
+	        foreach ($before as $beforeItem)
+	        {
+		        $user->updateCar(${'car' . ucfirst($beforeItem)}->id, 'before', $model->{$beforeItem . '_foto'});
+	        }
         }
 
         switch ($model->main_time) {

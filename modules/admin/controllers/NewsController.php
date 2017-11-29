@@ -127,7 +127,7 @@ class NewsController extends DefaultController
     }
 
     /**
-     * Загрузка изображений в галерею новостей
+     * Загрузка изображения в галерею новостей
      *
      * @return array
      */
@@ -152,12 +152,53 @@ class NewsController extends DefaultController
                 ],
                 'imageName' => $imageName
             ];
+        } else {
+	        return [
+		        'error' => $upload->errors
+	        ];
         }
-
-        return [
-            'error' => $upload->errors
-        ];
     }
+
+	/**
+	 * Загрузка изображений в галерею новостей
+	 *
+	 * @return array
+	 */
+	public function actionUploadGallery()
+	{
+		Yii::$app->response->format = Response::FORMAT_JSON;
+
+		$upload = new Upload();
+		$upload->imageFile = UploadedFile::getInstances($upload, 'imageFile');
+
+		$error = '';
+		$errorKeys = $initialPreview = $initialPreviewConfig = [];
+
+		foreach ($upload->imageFile as $key => $file) {
+			$imageName = '/uploads/temp/' . md5(News::className() . time() . $file->tempName) . '.' . $file->extension;
+
+			if ($file->saveAs(Yii::getAlias('@webroot') . $imageName)) {
+				$initialPreview[] = $imageName;
+
+				$initialPreviewConfig[] = [
+					'caption' => basename(Yii::getAlias('@webroot') . $imageName),
+					'size'    => filesize(Yii::getAlias('@webroot') . $imageName),
+					'key'     => $imageName
+				];
+			} else {
+				$error = Yii::t('app/error', 'Errors occured while files were uploaded.');
+				$errorKeys[] = $key;
+			}
+		}
+
+		return [
+			'error' => $error,
+			'errorKeys' => $errorKeys,
+			'initialPreview' => $initialPreview,
+			'initialPreviewConfig' => $initialPreviewConfig,
+			'append' => false
+		];
+	}
 
 	/**
 	 * @param $id

@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\components\ArrayHelper;
 use app\models\User;
 use yii;
 use yii\filters\AccessControl;
@@ -50,25 +51,28 @@ class SystemController extends BaseController
 
 	/**
 	 * Signing in
+	 *
+	 * @return array
 	 */
     public function actionSignIn()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!Yii::$app->user->isGuest) {
-            echo json_encode([
+            return [
                 'error' => Yii::t('app', 'Already Signed In')
-            ]);
+            ];
         }
 
         $model = new User();
         $model->scenario = 'login';
+
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             Yii::$app->getUser()->setReturnUrl('');
-            echo json_encode([
+
+            return [
                 'status' => 'Ok'
-            ]);
-            exit;
+            ];
         }
         
         $errors = '';
@@ -81,9 +85,9 @@ class SystemController extends BaseController
             $errors = Yii::t('app', 'General error');
         }
         
-        echo json_encode([
+        return [
             'error' => $errors
-        ]);
+        ];
     }
 
 	/**

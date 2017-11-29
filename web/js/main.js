@@ -1,12 +1,5 @@
 var emailPattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
     cropperImage = $('#cropped_img'),
-    cropperAvatarOptions = {
-        minCropBoxWidth: 200,
-        minCropBoxHeight: 200,
-        viewMode: 1,
-        aspectRatio: 1,
-        preview: '.img-preview'
-    },
     cropperOptions = {
         minCropBoxWidth: 480,
         minCropBoxHeight: 270,
@@ -14,27 +7,97 @@ var emailPattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\
         aspectRatio: 16/9,
         preview: '.img-preview'
     },
-    cropFunc = 'cropImage',
     messageDialog = $('#messageDlg'),
     compareListPage = 1,
-    elemUpload,
     compareCompareUpload,
-    avatarUpload,
     isAdmin = false,
     newsCount,
     newsPage,
     newsPerPage,
 
+    /**
+     *
+     * @type {{}}
+     */
 	Main = {
+        cropperImage: null,
+        cropperCallback: 'Main.cropImage',
+        uploadHandler: null,
+
         /**
          * Init of object
          */
         init: function () {
             var self = this;
 
+            self.cropperImage = $('#cropped_img');
+
             $.getScript('/js/user.js', function () {
                 User.init();
             });
+
+            self.attachEvents();
+        },
+
+        /**
+         * Attach events
+         */
+        attachEvents: function () {
+            // Cropper Methods
+            $(document.body).on('click', '[data-crop]', function () {
+                var data = $(this).data(),
+                    $target,
+                    result;
+
+                if (data.crop) {
+                    data = $.extend({}, data); // Clone a new one
+
+                    if (typeof data.target !== 'undefined') {
+                        $target = $(data.target);
+
+                        if (typeof data.option === 'undefined') {
+                            try {
+                                data.option = JSON.parse($target.val());
+                            } catch (e) {
+                                //console.log(e.message);
+                            }
+                        }
+                    }
+
+                    result = Main.cropperImage.cropper(data.crop, data.option);
+
+                    if (data.crop === 'getData') {
+                        Main.getFunction(Main.cropperCallback)(result);
+                    }
+
+                    if ($.isPlainObject(result) && $target) {
+                        try {
+                            $target.val(JSON.stringify(result));
+                        } catch (e) {
+                            //console.log(e.message);
+                        }
+                    }
+                }
+            });
+        },
+
+        /**
+         *
+         * @param string
+         * @return {*}
+         */
+        getFunction: function(string) {
+            var i,
+                scope = window,
+                scopeSplit = string.split('.');
+
+            for (i = 0; i < scopeSplit.length - 1; i++)
+            {
+                scope = scope[scopeSplit[i]];
+                if (scope === undefined) return;
+            }
+
+            return scope[scopeSplit[scopeSplit.length - 1]];
         }
 	};
 
@@ -187,71 +250,8 @@ $(function() {
 			$('#cropperDlg .viewport').prepend('<img id="cropped_img" />');
 		}
     });
-
-    $('#aboutDlg').dialog({
-        autoOpen: false,
-        closeText: 'закрыть',
-        dialogClass: 'aboutDlg',
-        title: 'О себе',
-        height: 275,
-        width:345,
-        resizable: false,
-        modal: true,
-        buttons: {
-            'Сохранить': function() {
-                saveAbout();
-            },
-            'Отменить': function() {
-                $(this).dialog('close');
-            }
-        }
-    });
-
-    $('#aboutDlg textarea').jqxInput({
-        theme: 'web',
-        height: 150,
-        width: 313,
-        minLength: 1
-    });
 	
 	*/
-
-    // Cropper Methods
-    $(document.body).on('click', '[data-crop]', function () {
-        var data = $(this).data(),
-            $target,
-            result;
-
-        if (data.crop) {
-            data = $.extend({}, data); // Clone a new one
-
-            if (typeof data.target !== 'undefined') {
-                $target = $(data.target);
-
-                if (typeof data.option === 'undefined') {
-                    try {
-                        data.option = JSON.parse($target.val());
-                    } catch (e) {
-                        //console.log(e.message);
-                    }
-                }
-            }
-
-            result = cropperImage.cropper(data.crop, data.option);
-
-            if (data.crop === 'getData') {
-                window[cropFunc](result);
-            }
-
-            if ($.isPlainObject(result) && $target) {
-                try {
-                    $target.val(JSON.stringify(result));
-                } catch (e) {
-                    //console.log(e.message);
-                }
-            }
-        }
-    });
 
     $('[data-video]').each(function () {
         var $this = $(this);
@@ -271,42 +271,6 @@ $(function() {
                 $(window).trigger('resize');
             }
         });
-    });
-
-	$('#edit_email').on('click', function(e) {
-		e.preventDefault();
-		$('.fnErrorMsg').removeClass('fnShowErrorMsg');
-        var emailDlg = $('#emailDlg');
-        emailDlg.find('input').removeClass('input_error');
-        emailDlg.modal('show');
-	});
-
-	$('#edit_password').on('click', function(e) {
-		e.preventDefault();
-		var passwordDlg = $('#passwordDlg');
-        passwordDlg.find('input').removeClass('input_error');
-        passwordDlg.find('.response-text').remove();
-        passwordDlg.modal('show');
-	});
-
-    $('#edit_profile').on('click', function(e) {
-        e.preventDefault();
-        $('.fnErrorMsg').removeClass('fnShowErrorMsg');
-        var profileDlg = $('#profileDlg');
-        profileDlg.find('input').removeClass('input_error');
-        profileDlg.modal('show');
-    });
-
-    $('.btnEditPassword').on('click', function () {
-        editPassword();
-    });
-
-    $('.btnEditEmail').on('click', function () {
-        editEmail();
-    });
-
-    $('.btnEditProfile').on('click', function () {
-        editProfile();
     });
 	
 	$('#authOpen, .authOpen').on('click', function(e) {
@@ -398,57 +362,43 @@ $(function() {
 			}
 		});
 	});
-
-    var avatarImg = $('#avatar_image');
-	if (avatarImg.length) {
-		avatarUpload = avatarImg.upload({
-			name: 'Upload[imageFile]',
-			action: '/uploader/upload',
-			enctype: 'multipart/form-data',
-			params: {
-				field: 'Upload[imageFile]'
-			},
-			autoSubmit: true,
-			onSubmit: function() {
-				elemUpload = '#current-avatar';
-                cropFunc = 'cropAvatarImage';
-                ajaxSpinner.add(
-                    $('#avatar_container'),
-                    'medium',
-                    'prepend',
-                    {
-                        'position': 'absolute',
-                        'top': 6,
-                        'left': -30
-                    }
-                );
-			},
-			onComplete: function(response) { showAvatarCropper('#avatar_container', response); },
-			onSelect: function() {}
-		});
-	}
 	
 	$('#closeFlashMsg').on('click', function() {
 		$('[class*="flash_msg_"]').slideUp();
 	});
 	
 	$('.loginVK').on('click', function() {
+	    Comparison.prepareData();
+	    Comparison.saveData();
+
 		window.location = vkAuthUrl;
 	});
 	
 	$('.loginOK').on('click', function() {
+        Comparison.prepareData();
+        Comparison.saveData();
+
 		window.location = okAuthUrl;
 	});
 	
 	$('.loginFB').on('click', function() {
+        Comparison.prepareData();
+        Comparison.saveData();
+
 		window.location = fbAuthUrl;
 	});
 	
 	$('.loginTW').on('click', function() {
+        Comparison.prepareData();
+        Comparison.saveData();
+
 		window.location = twAuthUrl;
 	});
 	
 	$('.loginGoogle').on('click', function() {
+        Comparison.prepareData();
+        Comparison.saveData();
+
 		window.location = googleAuthUrl;
 	});
 	
@@ -607,6 +557,7 @@ var registerUser = function() {
 			if (data.error) {
                 $('#authDlg').find('.signupBtnGroup').prepend('<div class="response-text text-danger">' + data.error + '</div>');
             } else {
+                Comparison.saveData();
                 location.reload();
             }
 		},
@@ -639,7 +590,7 @@ var signinUser = function() {
 
 	ajaxSpinner.dialog($('#authDlg').find('.signinBtnGroup'));
 
-	var remember = $('#signin_remeber').is(':checked') ? 1 : 0;
+	var remember = $('#signin_remember').is(':checked') ? 1 : 0;
 
 	$.ajax({
 		url: baseURL + 'sign-in', 
@@ -659,6 +610,8 @@ var signinUser = function() {
 			if (data.error) {
                 $('#authDlg').find('.signinBtnGroup').prepend('<div class="response-text text-danger">' + data.error + '</div>');
             } else {
+			    Comparison.saveData();
+
                 if (returnUrl.length) {
                     window.location.href = baseURL + trim(returnUrl, '/');
                 } else {
@@ -709,136 +662,6 @@ var resetPassword = function() {
 			ajaxSpinner.stop();
 		}
 	});
-};
-
-var editPassword = function () {
-    $('.response-text').remove();
-
-    var passwordDlg = $('#passwordDlg');
-    var password = $('#password');
-    var newPassword = $('#newPassword');
-    var confirmPassword = $('#confirmPassword');
-
-    if (password.val().length < 4 || newPassword.val().length < 4 || confirmPassword.val().length < 4) {
-        passwordDlg.find('.modal-footer .btn-group').prepend('<div class="response-text text-danger">Все поля обязательны к заполнению</div>');
-        return;
-    }
-
-    if (newPassword.val() !== confirmPassword.val()) {
-        newPassword.addClass('input_error');
-        confirmPassword.addClass('input_error');
-        passwordDlg.find('.modal-footer .btn-group').prepend('<div class="response-text text-danger">Пароли не совпадают</div>');
-        return;
-    }
-
-    ajaxSpinner.dialog(passwordDlg.find('.modal-footer .btn-group'));
-
-    $.ajax({
-        url: baseURL + 'profile/edit-password',
-        async: true,
-        type: 'POST',
-        dataType: 'html',
-        data: {
-            User: {
-                password: password.val(),
-                newPassword: newPassword.val(),
-                confirmPassword: confirmPassword.val()
-            }
-        },
-        success: function(response) {
-            var data = $.parseJSON(response);
-            if (data.error) {
-                passwordDlg.find('.modal-footer .btn-group').prepend('<div class="response-text text-danger">' + data.error + '</div>');
-            } else {
-                window.location.href = baseURL;
-            }
-        },
-        complete: function() {
-            ajaxSpinner.stop();
-        }
-    });
-};
-
-var editEmail = function () {
-    $('.response-text').remove();
-
-    var emailDlg = $('#emailDlg');
-    var email = $('#email');
-
-    if (!validateValueByPattern(email.val(), emailPattern)) {
-        email.addClass('input_error');
-        emailDlg.find('.modal-footer .btn-group').prepend('<div class="response-text text-danger">Неверный формат e-mail</div>');
-        return;
-    }
-
-    ajaxSpinner.dialog(emailDlg.find('.modal-footer .btn-group'));
-
-    $.ajax({
-        url: baseURL + 'profile/save',
-        async: true,
-        type: 'POST',
-        dataType: 'html',
-        data: {
-            User: {
-                email: email.val()
-            },
-            scenario: 'edit-email'
-        },
-        success: function(response) {
-            var data = $.parseJSON(response);
-            if (data.error) {
-                var error = true;
-                email.addClass('input_error');
-                emailDlg.find('.modal-footer .btn-group').prepend('<div class="response-text text-danger">' + data.error + '</div>');
-            } else {
-                emailDlg.find('.modal-footer .btn-group').prepend('<div class="response-text text-success">' + data.message + '</div>');
-            }
-        },
-        complete: function() {
-            ajaxSpinner.stop();
-        }
-    });
-};
-
-var editProfile = function() {
-    $('.response-text').remove();
-
-    var profileDlg = $('#profileDlg'),
-        timezone = $('#timezone'),
-        city = $('#city'),
-        country = $('#country'),
-        about = $('#about'),
-        error = false;
-
-    ajaxSpinner.dialog(profileDlg.find('.modal-footer .btn-group'));
-
-    $.ajax({
-        url: baseURL + 'profile/save',
-        async: true,
-        type: 'POST',
-        dataType: 'html',
-        data: {
-            UserProfile: {
-                country: country.val(),
-                city: city.val(),
-                about: about.val()
-            },
-            timezone: timezone.val(),
-            scenario: 'edit-profile'
-        },
-        success: function(response) {
-            var data = $.parseJSON(response);
-            if (data.error) {
-                profileDlg.find('.modal-footer .btn-group').prepend('<div class="response-text text-danger">' + data.error + '</div>');
-            } else {
-                profileDlg.find('.modal-footer .btn-group').prepend('<div class="response-text text-success">' + data.message + '</div>');
-                window.location.href = window.location;
-            }
-        },
-        complete: function() {
-            ajaxSpinner.stop();
-        }
-    });
 };
 
 function showLoader(elem, css)
@@ -902,7 +725,7 @@ var cropImage = function(data) {
             } else {
                 var src = data.src;
                 if (!isAdmin) {
-                    $(elemUpload + ' img').attr('src', baseURL + data.src);
+                    $(Main.uploadHandler + ' img').attr('src', baseURL + data.src);
                 } else {
                     $('#featured_image').attr('src', baseURL + data.src);
                     $('#no_featured_image, #featured_addition').hide();
@@ -916,81 +739,6 @@ var cropImage = function(data) {
             ajaxSpinner.stop();
         }
     });
-};
-
-var showAvatarCropper = function (elem, response) {
-    var data = $.parseJSON(response);
-    $(elem + " form[target^='iframe']")[0].reset();
-    ajaxSpinner.stop();
-
-    if (data.resultCode === 'failed') {
-        showMessage(data.result.imageFile.join('<br>'), 'Ошибка!');
-        return;
-    }
-
-    $('#avatarCropperDlg').modal('show');
-    $('.response-text').remove();
-    cropperImage.cropper('destroy');
-    cropperImage.attr('src', baseURL + 'uploads/temp/' + data.fileName.name).cropper(cropperAvatarOptions);
-};
-
-var cropAvatarImage = function (data) {
-    $('.response-text').remove();
-
-	var src = cropperImage.attr('src'),
-        avatarCropperDlg = $('#avatarCropperDlg');
-
-    ajaxSpinner.dialog(avatarCropperDlg.find('.modal-footer .btn-group'));
-
-	$.ajax({
-		url: baseURL + 'uploader/crop', 
-		async: true,
-		type: 'POST',
-		dataType: 'html',
-		data: {
-			src: src,
-            x: data.x,
-			y: data.y,
-			height: data.height,
-			width: data.width,
-			cropWidth: 200,
-			cropHeight: 200,
-			dirName: 'avatars'
-		},
-		success: function(response) {
-			var data = $.parseJSON(response);
-			if (data.error) {
-                avatarCropperDlg.find('.modal-footer .btn-group').prepend('<div class="response-text text-danger">' + data.error + '</div>');
-			} else {
-				var src = data.src;
-				$.ajax({
-					url: baseURL + 'profile/save',
-					async: true,
-					type: 'POST',
-					dataType: 'html',
-					data: {
-                        User: {
-                            avatar: data.name
-                        }
-					},
-					success: function(response) {
-						var data = $.parseJSON(response);
-						if (data.error) {
-                            avatarCropperDlg.find('.modal-footer .btn-group').prepend('<div class="response-text text-danger">' + data.error + '</div>');
-						} else {
-							$('.current-avatar img, .comparison-author-avatar-32.in_header img, .my_profile_allview .avat_50 img').prop('src', baseURL + src);
-						}
-					},
-					complete: function() {
-						avatarCropperDlg.modal('hide');
-					}
-				});
-			}
-		},
-        complete: function () {
-            ajaxSpinner.stop();
-        }
-	});
 };
 
 var manufacturerChange = function(holder) {
@@ -1008,7 +756,7 @@ var manufacturerChange = function(holder) {
 	$('.comparison-add-point-handler').removeClass('active');
 	$('#comare_values').slideUp();
 	
-	if (_manufacturer.val() !== 0) {
+	if (parseInt(_manufacturer.val()) !== 0) {
 	    ajaxSpinner.add(
 	        _manufacturer,
             'medium',
@@ -1070,7 +818,7 @@ var modelChange = function(holder) {
 	$('.comparison-add-point-handler').removeClass('active');
 	$('#comare_values').slideUp();
 	
-	if (_model.val() !== 0) {
+	if (parseInt(_model.val()) !== 0) {
         ajaxSpinner.add(
             _model,
             'medium',

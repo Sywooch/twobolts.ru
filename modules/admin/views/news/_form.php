@@ -121,7 +121,7 @@ foreach ($model->models as $item)
                     <?php endforeach; ?>
 
                     <?= FileInput::widget([
-                        'name' => 'Upload[imageFile]',
+                        'name' => 'Upload[imageFile][]',
                         'options' => [
                             'multiple' => true
                         ],
@@ -135,11 +135,13 @@ foreach ($model->models as $item)
                             'initialPreviewConfig' => $galleryInitialPreviewConfig,
                             'overwriteInitial' => false,
                             'maxFileSize' => 2800,
-                            'uploadUrl' => '/admin/news/upload-gallery-image',
+	                        'uploadAsync' => false,
+                            'uploadUrl' => '/admin/news/upload-gallery',
                             'deleteUrl' => '/admin/news/delete-gallery-image?id=' . $model->id
                         ],
                         'pluginEvents' => [
                             'fileuploaded' => new JsExpression('function(event, data, previewId, index) { admin.news.galleryItemUploaded(data); }'),
+                            'filebatchuploadsuccess' => new JsExpression('function(event, data, previewId, index) { admin.news.galleryUploaded(data); }'),
                             'filedeleted' => new JsExpression('function(event, key) { admin.news.galleryItemRemoved(key); }'),
                             'filesorted' => new JsExpression('function(event, params) { admin.news.gallerySorted(params); }')
                         ]

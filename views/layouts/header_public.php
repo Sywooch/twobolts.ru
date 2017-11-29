@@ -66,8 +66,8 @@ Modal::begin([
         <p class="fnErrorMsg">Пароль должен быть не меньше 4 символов.</p>
 
         <div class="checkbox">
-            <label for='signin_remeber'>
-                <?= Html::checkbox('signin_remeber', false, ['id' => 'signin_remeber', 'value' => 1]); ?>
+            <label for='signin_remember'>
+                <?= Html::checkbox('signin_remember', false, ['id' => 'signin_remember', 'value' => 1]); ?>
                 Запомнить меня
             </label>
         </div>

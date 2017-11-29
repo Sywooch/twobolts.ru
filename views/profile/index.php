@@ -117,7 +117,7 @@ Modal::begin([
     'id' => 'emailDlg',
     'header' => '<h4 class="modal-title">' . Yii::t('app', 'Edit Email'). '</h4>',
     'footer' => '<div class="btn-group">' .
-        Html::button(Yii::t('app', 'Continue'), ['class' => 'btn btn-orange btnEditEmail']) .
+        Html::button(Yii::t('app', 'Continue'), ['class' => 'btn btn-orange btn-update-email']) .
         Html::button(Yii::t('app', 'Close'), ['class' => 'btn btn-orange', 'data-dismiss' => 'modal']) .
         '</div>'
 ]);
@@ -157,7 +157,7 @@ Modal::begin([
     'id' => 'passwordDlg',
     'header' => '<h4 class="modal-title">' . Yii::t('app', 'Edit Password'). '</h4>',
     'footer' => '<div class="btn-group">' .
-        Html::button(Yii::t('app', 'Continue'), ['class' => 'btn btn-orange btnEditPassword']) .
+        Html::button(Yii::t('app', 'Continue'), ['class' => 'btn btn-orange btn-update-password']) .
         Html::button(Yii::t('app', 'Close'), ['class' => 'btn btn-orange', 'data-dismiss' => 'modal']) .
         '</div>'
 ]);
@@ -249,7 +249,7 @@ Modal::begin([
     'id' => 'profileDlg',
     'header' => '<h4 class="modal-title">' . Yii::t('app', 'Edit Profile') . '</h4>',
     'footer' => '<div class="btn-group">' .
-        Html::button(Yii::t('app', 'Continue'), ['class' => 'btn btn-orange btnEditProfile']) .
+        Html::button(Yii::t('app', 'Continue'), ['class' => 'btn btn-orange btn-update-profile']) .
         Html::button(Yii::t('app', 'Close'), ['class' => 'btn btn-orange', 'data-dismiss' => 'modal']) .
         '</div>'
 ]);

@@ -139,6 +139,16 @@ var news = {
         $('form').append('<input type="hidden" name="gallery[]" value="' + data.response.imageName + '">');
     },
 
+    galleryUploaded: function (data) {
+        var i,
+            response = data.response;
+
+        for (i = 0; i < response.initialPreview.length; ++i)
+        {
+            $('form').append('<input type="hidden" name="gallery[]" value="' + response.initialPreview[i] + '">');
+        }
+    },
+
     galleryItemRemoved: function (key) {
         $('[value="' + key+ '"]').remove();
     },

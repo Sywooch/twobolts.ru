@@ -65,10 +65,10 @@ if (!is_array($messages)) {
             twAuthUrl = '<?= $context->getSocialAuthUrl('twitter'); ?>',
             googleAuthUrl = '<?= $context->getSocialAuthUrl('google'); ?>',
 
-            isLoggedIn = <?= Yii::$app->user->isGuest ? 'false' : 'true'; ?>,
             defaultFoto = '<?= Car::getDefaultImage(); ?>',
             returnUrl = '<?= Yii::$app->getUser()->getReturnUrl(); ?>',
             commentsPerPage = <?= Comment::COMMENTS_PER_PAGE; ?>;
+            isGuest = <?= Yii::$app->user->isGuest ? 'true' : 'false'; ?>;
             localizationMessages = <?= json_encode($messages)?>;
     </script>
 
@@ -103,7 +103,7 @@ if (!is_array($messages)) {
                 <?= Yii::$app->user->isGuest ? $this->render('header_public') : $this->render('header_private'); ?>
 
                 <div class="add_compare_btn">
-                    <a href="/comparison/add">+ <span>Сравни авто</span></a>
+                    <?= Html::a('+ <span>Сравни авто</span>', '/comparison/add'); ?>
                 </div>
                 <div class="clear"></div>
             </div>
@@ -165,5 +165,6 @@ Modal::begin([
 
 <?php $this->endBody() ?>
 </body>
+
 </html>
 <?php $this->endPage() ?>

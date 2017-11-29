@@ -1,4 +1,105 @@
-var mainCompareUpload;
+var mainCompareUpload,
+
+    /**
+     *
+     * @type {{}}
+     */
+    Comparison = {
+        data: null,
+        carRequest: null,
+
+        prepareData: function () {
+            var mainManufacturerId = $('#main_manufacturer').val(),
+                mainModelId = $('#main_model').val(),
+                mainEngineId = $('#main_engine').val(),
+                mainPhoto = $('#main_photo').find('img').attr('src'),
+                mainTime = $('#main_time').val(),
+                compareManufacturerId = $('#compare_manufacturer').val(),
+                compareModelId = $('#compare_model').val(),
+                compareEngineId = $('#compare_engine').val(),
+                comparePhoto = $('#compare_photo').find('img').attr('src'),
+                compareTime = $('#compare_time').val(),
+                criteria = [],
+                comment = $('#criteria_resume').val(),
+                counter = 0,
+                garage = [], before = [],
+                inter, state,
+                criteriaID, mainCriteriaElem, compareCriteriaElem,
+                criteriaMainValue, criteriaCompareValue, criteriaComment;
+
+            $('.fn-criteria').each(function(index, element) {
+                ++counter;
+                criteriaID = $(this).attr('data-id');
+
+                mainCriteriaElem = $('.fn-point-main-' + criteriaID + ' .active');
+                compareCriteriaElem = $('.fn-point-compare-' + criteriaID + ' .active');
+
+                if (mainCriteriaElem.length && compareCriteriaElem.length) {
+                    criteriaMainValue = mainCriteriaElem.text();
+                    criteriaCompareValue = compareCriteriaElem.text();
+                    criteriaComment = $('[name="criteria_comment_' + criteriaID + '"]').val();
+
+                    criteria.push({
+                        criteria_id: criteriaID,
+                        criteria_main_value: criteriaMainValue,
+                        criteria_compare_value: criteriaCompareValue,
+                        criteria_comment: criteriaComment
+                    });
+                }
+            });
+
+            if (criteria.length < counter) {
+                showMessage(localizationMessages['Enter all points'], localizationMessages['error']);
+
+                return false;
+            }
+
+            $('[data-value]').each(function () {
+                inter = $(this).bootstrapSwitch('indeterminate');
+                state = $(this).bootstrapSwitch('state');
+
+                if (inter === false) {
+                    if (state) {
+                        garage.push($(this).attr('data-value'));
+                    } else {
+                        before.push($(this).attr('data-value'));
+                    }
+                }
+            });
+
+            this.data = {
+                mainManufacturerId: mainManufacturerId,
+                mainModelId: mainModelId,
+                mainEngineId: mainEngineId,
+                mainPhoto: mainPhoto,
+                mainTime: mainTime,
+                compareManufacturerId: compareManufacturerId,
+                compareModelId: compareModelId,
+                compareEngineId: compareEngineId,
+                comparePhoto: comparePhoto,
+                compareTime: compareTime,
+                criteria: criteria,
+                comment: comment,
+                garage: garage,
+                before: before
+            };
+
+            return this.data;
+        },
+
+        saveData: function () {
+            $.ajax({
+                url: baseURL + 'comparison/save-data',
+                async: true,
+                type: 'POST',
+                dataType: 'html',
+                data: {
+                    comparisonData: this.data,
+                    carRequest: this.carRequest
+                }
+            });
+        }
+    };
 
 $(function() {
     $('.catalog-sort a').on('click', function(e) {
@@ -22,7 +123,7 @@ $(function() {
 
             _comparisonListPageNum = 1;
 
-			if ($(this).parent().attr('data-get') == 'catalog') {
+			if ($(this).parent().attr('data-get') === 'catalog') {
                 $.ajax({
                     url: baseURL + 'catalog/get-manufacturer-cars',
                     async: true,
@@ -78,8 +179,8 @@ $(function() {
             },
             autoSubmit: true,
             onSubmit: function() {
-                elemUpload = '#main_photo';
-                cropFunc = 'cropImage';
+                Main.uploadHandler = '#main_photo';
+                Main.cropperCallback = 'cropImage';
                 ajaxSpinner.button(
                     comparisonMainImage,
                     'medium-dark'
@@ -101,8 +202,8 @@ $(function() {
             },
             autoSubmit: true,
             onSubmit: function() {
-                elemUpload = '#compare_photo';
-                cropFunc = 'cropImage';
+                Main.uploadHandler = '#compare_photo';
+                Main.cropperCallback = 'cropImage';
                 ajaxSpinner.button(
                     comparisonCompareImage,
                     'medium-dark'
@@ -123,7 +224,8 @@ $(function() {
 		e.preventDefault();
 
         $('.tnx').slideUp();
-		var comparisonValues = $('#comparison_values'),
+
+        var comparisonValues = $('#comparison_values'),
 
             mainManufacturerId = $('#main_manufacturer'),
             mainModelId = $('#main_model'),
@@ -135,10 +237,10 @@ $(function() {
             compareEngineId = $('#compare_engine'),
             compareTime = $('#compare_time');
 
-		if (mainManufacturerId.val() != 0 && mainModelId.val() != 0 && mainEngineId.val() != 0 && mainTime.val() != 0
-            && compareManufacturerId.val() != 0 && compareModelId.val() != 0 && compareEngineId.val() != 0 && compareTime.val() != 0) {
+		if (parseInt(mainManufacturerId.val()) !== 0 && parseInt(mainModelId.val()) !== 0 && parseInt(mainEngineId.val()) !== 0 && mainTime.val() !== '0'
+            && parseInt(compareManufacturerId.val()) !== 0 && parseInt(compareModelId.val()) !== 0 && parseInt(compareEngineId.val()) !== 0 && compareTime.val() !== '0') {
 
-			if (mainManufacturerId.val() == compareManufacturerId.val() && mainModelId.val() == compareModelId.val()) {
+			if (mainManufacturerId.val() === compareManufacturerId.val() && mainModelId.val() === compareModelId.val()) {
 				showMessage(localizationMessages['Trying to compare the same car'], localizationMessages['error']);
 				return;
 			}
@@ -160,6 +262,7 @@ $(function() {
 				},
 				success: function(response) {
 					var data = $.parseJSON(response);
+
 					if (data.error) {
                         showMessage(data.error, localizationMessages['error']);
                     } else {
@@ -195,113 +298,49 @@ $(function() {
 	$('#btn_add_compare').on('click', function(e) {
 		e.preventDefault();
 
-		var mainManufacturerID = $('#main_manufacturer').val(),
-			mainModelID = $('#main_model').val(),
-			mainEngineID = $('#main_engine').val(),
-			mainPhoto = $('#main_photo').find('img').attr('src'),
-			mainTime = $('#main_time').val(),
-			compareManufacturerID = $('#compare_manufacturer').val(),
-			compareModelID = $('#compare_model').val(),
-			compareEngineID = $('#compare_engine').val(),
-            comparePhoto = $('#compare_photo').find('img').attr('src'),
-			compareTime = $('#compare_time').val(),
-			criteria = [],
-			comment = $('#criteria_resume').val();
-			
-		var counter = 0;
-		$('.fn-criteria').each(function(index, element) {
-			++counter;
-			var criteriaID = $(this).attr('data-id');
+		Comparison.prepareData();
 
-			var mainCriteriaElem = $('.fn-point-main-' + criteriaID + ' .active'),
-                compareCriteriaElem = $('.fn-point-compare-' + criteriaID + ' .active');
+        if (isGuest) {
+            $('#authOpen').trigger('click');
+        } else if (Comparison.data) {
+            ajaxSpinner.button($(this), 'medium-white');
 
-			if (mainCriteriaElem.length && compareCriteriaElem.length) {
-				var criteriaMainValue = mainCriteriaElem.text(),
-                    criteriaCompareValue = compareCriteriaElem.text(),
-                    criteriaComment = $('[name="criteria_comment_' + criteriaID + '"]').val();
+            $.ajax({
+                url: baseURL + 'comparison/add-model',
+                async: true,
+                type: 'POST',
+                dataType: 'html',
+                data: Comparison.data,
+                success: function (response) {
+                    var data = $.parseJSON(response);
 
-				criteria.push({
-					criteria_id: criteriaID,
-					criteria_main_value: criteriaMainValue,
-					criteria_compare_value: criteriaCompareValue,
-					criteria_comment: criteriaComment
-				});
-			}
-		});
+                    if (data.error) {
+                        showMessage(data.error, localizationMessages['error']);
+                    } else {
+                        $('#comparison_values').slideUp();
+                        $('#criteria_resume').val('');
+                        $('.small-comment').val('');
+                        $('.comparison-add-point-handler').removeClass('active');
+                        $('.comparison-add-item-main-name, .comparison-add-item-compare-name').html('');
 
-		if (criteria.length < counter) {
-			showMessage(localizationMessages['Enter all points'], localizationMessages['error']);
-			return;
-		}
+                        $('#main_time, #compare_time').val('0');
+                        $('#main_manufacturer, #compare_manufacturer').val(0);
 
-        ajaxSpinner.button($(this), 'medium-white');
+                        manufacturerChange('main');
+                        manufacturerChange('compare');
 
-        var garage = 0,
-            before = 0;
+                        if (comparisonData.garage || comparisonData.before) {
+                            $('.switch-input').bootstrapSwitch('toggleIndeterminate');
+                        }
 
-        $('[data-value]').each(function() {
-            var inter = $(this).bootstrapSwitch('indeterminate');
-            var state = $(this).bootstrapSwitch('state');
-
-            if (inter == false) {
-                if (state) {
-                    garage = $(this).attr('data-value');
-                } else {
-                    before = $(this).attr('data-value');
-                }
-            }
-        });
-
-		$.ajax({
-			url: baseURL + 'comparison/add-model',
-			async: true,
-			type: 'POST',
-			dataType: 'html',
-			data: {
-				mainManufacturerID: mainManufacturerID,
-				mainModelID: mainModelID,
-				mainEngineID: mainEngineID,
-				mainPhoto: mainPhoto,
-				mainTime: mainTime,
-				compareManufacturerID: compareManufacturerID,
-				compareModelID: compareModelID,
-				compareEngineID: compareEngineID,
-				comparePhoto: comparePhoto,
-				compareTime: compareTime,
-				criteria: criteria,
-				comment: comment,
-                garage: garage,
-                before: before
-			},
-			success: function(response) {
-				var data = $.parseJSON(response);
-				if (data.error) {
-                    showMessage(data.error, localizationMessages['error']);
-                } else {
-					$('#comparison_values').slideUp();
-					$('#criteria_resume').val('');
-					$('.small-comment').val('');
-					$('.comparison-add-point-handler').removeClass('active');
-					$('.comparison-add-item-main-name, .comparison-add-item-compare-name').html('');
-
-					$('#main_time, #compare_time').val(0);
-					$('#main_manufacturer, #compare_manufacturer').val(0);
-
-                    manufacturerChange('main');
-					manufacturerChange('compare');
-
-                    if (garage || before) {
-                        $('.swith-input').bootstrapSwitch('toggleIndeterminate');
+                        showMessage(localizationMessages['Comparison successfully added'], localizationMessages['success']);
                     }
-
-                    showMessage(localizationMessages['Comparison successfully added'], localizationMessages['success']);
-				}
-			},
-			complete: function() {
-				ajaxSpinner.stop(true);
-			}
-		});
+                },
+                complete: function () {
+                    ajaxSpinner.stop(true);
+                }
+            });
+        }
 	});
 
     var comparisonTabs = $('#comparison_tabs');
@@ -468,7 +507,7 @@ $(function() {
 			}
 		});
 
-        if ($('.comparison-thanks-user-link.hidden-thx.hidden').length == 0) {
+        if ($('.comparison-thanks-user-link.hidden-thx.hidden').length === 0) {
             $('.comparison-thanks-wrapper .fa').hide();
         } else {
             $('.comparison-thanks-wrapper .fa').show();
@@ -520,40 +559,51 @@ $(function() {
 
     $('.fnSendCarRequest').on('click', function(e) {
         e.preventDefault();
-        var $form = $('#car_request_form'),
-            manufacturer = $('#carrequest-manufacturer'),
+
+        var manufacturer = $('#carrequest-manufacturer'),
             model = $('#carrequest-model');
 
-		if (manufacturer.val().length && model.val().length) {
-            ajaxSpinner.button($(this));
+        if (isGuest) {
+            Comparison.carRequest = {
+                manufacturer: manufacturer.val(),
+                model: model.val()
+            };
 
-            $.ajax({
-                url: baseURL + 'catalog/car-request',
-                async: true,
-                type: 'POST',
-                dataType: 'html',
-                data: {
-                    CarRequest: {
-                        manufacturer: manufacturer.val(),
-                        model: model.val()
-                    }
-                },
-                success: function(response) {
-                    var data = $.parseJSON(response);
+            $('#authOpen').trigger('click');
+        } else {
+            if (manufacturer.val().length && model.val().length) {
+                ajaxSpinner.button($(this));
 
-                    if (data.status == 'ok') {
-                        $('.no-auto-catalog > div').slideToggle();
-                        showMessage(data.message, localizationMessages['New car']);
-                        manufacturer.val('');
-                        model.val('');
-                    } else {
-                        showMessage(data.message, localizationMessages['error']);
+                $.ajax({
+                    url: baseURL + 'catalog/car-request',
+                    async: true,
+                    type: 'POST',
+                    dataType: 'html',
+                    data: {
+                        CarRequest: {
+                            manufacturer: manufacturer.val(),
+                            model: model.val()
+                        }
+                    },
+                    success: function (response) {
+                        var data = $.parseJSON(response);
+
+                        if (data.status === 'ok') {
+                            $('.no-auto-catalog > div').slideToggle();
+
+                            manufacturer.val('');
+                            model.val('');
+
+                            showMessage(data.message, localizationMessages['New car']);
+                        } else {
+                            showMessage(data.message, localizationMessages['error']);
+                        }
+                    },
+                    complete: function () {
+                        ajaxSpinner.stop(true);
                     }
-                },
-                complete: function() {
-                    ajaxSpinner.stop(true);
-                }
-            });
+                });
+            }
         }
     });
 
@@ -569,7 +619,7 @@ $(function() {
             var h = el.actual('height');
             var parent = el.parent('.lineage-wrap');
 
-            if (parent.length == 0) {
+            if (parent.length === 0) {
                 el.wrap('<div class="lineage-wrap"></div>');
                 parent = el.parent('.lineage-wrap');
             }

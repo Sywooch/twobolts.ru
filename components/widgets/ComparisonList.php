@@ -68,7 +68,10 @@ class ComparisonList extends Widget
     public $_pageNum = 1;
     public $_sorting = 'date';
     public $_options = [];
-    
+
+	/**
+	 * Init
+	 */
     public function init()
     {
         parent::init();
@@ -78,6 +81,9 @@ class ComparisonList extends Widget
         }
     }
 
+	/**
+	 * @return string
+	 */
     public function run()
     {
         ComparisonListAsset::register($this->getView());

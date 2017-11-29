@@ -15,6 +15,8 @@ use Yii;
 
 class TimeZoneHelper
 {
+	const DEFAULT_TIMEZONE = 'Europe/Moscow';
+
 	/**
 	 * @return array
 	 */

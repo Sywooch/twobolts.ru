@@ -117,4 +117,12 @@ class CarRequest extends UserDependency
 			    ->send();
 	    }
     }
+
+	/**
+	 * @return bool
+	 */
+    public function hasData()
+    {
+    	return $this->manufacturer || $this->model;
+    }
 }

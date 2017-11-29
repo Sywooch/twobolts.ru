@@ -25,10 +25,14 @@ $(function() {
 		
 		if (commentEditor) {
 			commentEditor.on('instanceReady', function() {
-				if (!isLoggedIn) commentEditor.setReadOnly();
+				if (isGuest) {
+				    commentEditor.setReadOnly();
+                }
 			});
 		} else {
-			if (!isLoggedIn) commentText.addClass('ui-state-disabled');
+			if (isGuest) {
+			    commentText.addClass('ui-state-disabled');
+            }
 		}
 	}
 	
