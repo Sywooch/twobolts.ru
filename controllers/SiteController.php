@@ -22,14 +22,11 @@ class SiteController extends BaseController
 
     public function actionIndex()
     {
-        //echo '<pre>'.print_r($_SESSION, 2);
-        //echo '<pre>'.print_r(Yii::$app->session, 2);exit;
         $news = News::find()->orderBy(['created' => SORT_DESC])->limit(3)->all();
         
         return $this->render('index', [
             'comparison' => Comparison::getHomeComparison(),
             'newComparisons' => Comparison::getLastComparisons(3),
-            'topComparisons' => Comparison::getTopComparisons(),
             'activeUsers' => User::getActiveUsers(),
             'lastNews' => $news
         ]);

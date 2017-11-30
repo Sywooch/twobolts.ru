@@ -11,7 +11,7 @@ class m171030_151600_create_notification extends Migration
 		    'user_id' => $this->integer(11),
 		    'created' => $this->dateTime(),
 		    'message' => $this->text(),
-		    'is_new' => $this->boolean()->defaultValue(true)
+		    'is_read' => $this->boolean()->defaultValue(true)
 	    ]);
 
 	    $this->createIndex('user_id', 'notification', ['user_id']);

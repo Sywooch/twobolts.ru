@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 
 $user = User::identity();
-
+var_dump(count(User::identity()->notifications));
 ?>
 
 <div class="login-link">

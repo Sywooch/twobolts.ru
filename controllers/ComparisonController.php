@@ -11,6 +11,7 @@ use app\models\ComparisonThanks;
 use app\models\Engine;
 use app\models\Manufacturer;
 use app\models\Model;
+use app\models\Notification;
 use app\models\User;
 use app\models\UserFavorite;
 use yii;
@@ -367,7 +368,7 @@ class ComparisonController extends BaseController
         $comparisonId = Yii::$app->request->post('comparisonId');
         $like = Yii::$app->request->post('like');
         
-        $model = self::findModel($comparisonId);
+        $model = $this->findModel($comparisonId);
         
         if ($model) {
             $thanks = new ComparisonThanks();
@@ -376,6 +377,11 @@ class ComparisonController extends BaseController
             $thanks->dislike = $like;
             
             if ($thanks->validate() && $thanks->save()) {
+            	Notification::create(Notification::TYPE_LIKE_COMPARISON, $model->user_id, [
+            		'type' => $like ? Yii::t('app', 'disliked') : Yii::t('app', 'liked'),
+		            'url' => Html::a($model->getShortName(), $model->getUrl())
+	            ]);
+
                 return [
                     'list' => $this->renderAjax('_thanks', ['comparison' => $model])
                 ];
@@ -399,7 +405,7 @@ class ComparisonController extends BaseController
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         $comparisonId = Yii::$app->request->post('comparisonId');
-        $model = self::findModel($comparisonId);
+        $model = $this->findModel($comparisonId);
 
         if ($model) {
             $favorite = new UserFavorite();
@@ -489,7 +495,7 @@ class ComparisonController extends BaseController
     public function actionUpdateViews()
     {
         $comparisonId = Yii::$app->request->post('comparisonId');
-        $model = self::findModel($comparisonId);
+        $model = $this->findModel($comparisonId);
 
         if ($model) {
             $model->views = $model->views + 1;
@@ -525,6 +531,9 @@ class ComparisonController extends BaseController
         ];
     }
 
+	/**
+	 * Save session data
+	 */
     public function actionSaveData()
     {
 	    Yii::$app->session->set('comparisonData', Yii::$app->request->post('comparisonData'));
@@ -535,7 +544,7 @@ class ComparisonController extends BaseController
      * @param $id
      * @return null|Comparison
      */
-    public static function findModel($id)
+    public function findModel($id)
     {
         /** @var Comparison $model */
         $model = Comparison::findOne($id);

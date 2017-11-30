@@ -37,7 +37,7 @@ if ($widget->items) {
             </div>
 
             <div class="comparison-list-item-name">
-                <?= Html::a($item->getShortName(), '/comparison/view/' . ($item->url_title ? $item->url_title : $item->id)); ?>
+                <?= Html::a($item->getMediumName(), '/comparison/view/' . ($item->url_title ? $item->url_title : $item->id)); ?>
             </div>
 
             <div class="comparison-list-item-user">

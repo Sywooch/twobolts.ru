@@ -10,6 +10,7 @@ use yii\behaviors\SluggableBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
+use yii\db\Query;
 use yii\helpers\Inflector;
 use yii\helpers\Url;
 
@@ -41,6 +42,7 @@ use yii\helpers\Url;
  * @property ComparisonThanks[] $dislikes
  * @property UserFavorite[] $favorites
  * @property UserCommentKarma[] $karma
+ *
  */
 class Comparison extends UserDependency
 {
@@ -149,6 +151,11 @@ class Comparison extends UserDependency
         return $query;
     }
 
+	/**
+	 * @param $id
+	 *
+	 * @return array|null|ActiveRecord|static
+	 */
     public static function findById($id)
     {
         return self::getQuery()
@@ -156,6 +163,11 @@ class Comparison extends UserDependency
             ->one();
     }
 
+	/**
+	 * @param $url
+	 *
+	 * @return array|null|ActiveRecord|static
+	 */
     public static function findByUrl($url)
     {
         return self::getQuery()
@@ -214,6 +226,13 @@ class Comparison extends UserDependency
         return self::findByCars($mainCar->id, $compareCar->id, $byUser);
     }
 
+	/**
+	 * @param $carMainId
+	 * @param $carCompareId
+	 * @param bool $byUser
+	 *
+	 * @return static
+	 */
     public static function findByCars($carMainId, $carCompareId, $byUser = false)
     {
         $condition = [
@@ -351,7 +370,24 @@ class Comparison extends UserDependency
         return 0;
     }
 
-    public function getShortName()
+	/**
+	 * @return string
+	 */
+	public function getShortName()
+	{
+		return implode(' ', [
+			$this->carMain->manufacturer->name,
+			$this->carMain->model->name,
+			Yii::t('app', 'and'),
+			$this->carCompare->manufacturer->name,
+			$this->carCompare->model->name
+		]);
+	}
+
+	/**
+	 * @return string
+	 */
+    public function getMediumName()
     {
         return implode(' ', [
             $this->carMain->manufacturer->name,
@@ -366,6 +402,9 @@ class Comparison extends UserDependency
         ]);
     }
 
+	/**
+	 * @return string
+	 */
     public function getFullName()
     {
         return implode(' ', [
@@ -383,6 +422,11 @@ class Comparison extends UserDependency
         ]);
     }
 
+	/**
+	 * @param $type
+	 *
+	 * @return string
+	 */
     public function getCarName($type)
     {
         $carProp = 'car' . ucfirst($type);
@@ -441,6 +485,11 @@ class Comparison extends UserDependency
 		)';
     }
 
+	/**
+	 * @param $orderBy
+	 *
+	 * @return string
+	 */
     private static function getOrderBy($orderBy)
     {
         switch ($orderBy) {
@@ -700,95 +749,90 @@ class Comparison extends UserDependency
             ->all();
     }
 
+	/**
+	 * @return array
+	 */
     public static function getTopComparisons()
     {
-        $connection = Yii::$app->getDb();
-        $command = $connection->createCommand('
-            SELECT 
-				SUM(final.model_compares) AS model_compares, 
-				FORMAT(SUM(final.compares_value) / SUM(final.compares_criterias), 1) AS compares_value,
-				final.manufacturer_name, 
-				final.model_name,
-				final.model_image,
-				final.body_name, 
-				final.url_title, 
-				final.model_id 
-			FROM 
-			(
-				(SELECT 
-					COUNT(c.model_id) AS model_compares, 
-					ma.name AS manufacturer_name, 
-					mo.name AS model_name,
-					mo.image AS model_image,
-					b.body_name, 
-					mo.url_title, 
-					mo.id AS model_id, 
-					(
-						SELECT SUM(ccct.criteria_main_value)
-						FROM models AS mot 
-						JOIN cars AS ct ON ct.model_id = mot.id
-						JOIN cars_comparisons AS cct ON cct.car_main_id = ct.id AND cct.active = 1
-						JOIN cars_comparisons_criteria AS ccct ON ccct.comparison_id = cct.id 
-						WHERE mot.id = c.model_id
-					) AS compares_value,
-					(
-						SELECT COUNT(cct.id)
-						FROM models AS mot
-						JOIN cars AS ct ON ct.model_id = mot.id
-						JOIN cars_comparisons AS cct ON cct.car_main_id = ct.id AND cct.active = 1
-						JOIN cars_comparisons_criteria AS ccct ON ccct.comparison_id = cct.id
-						WHERE mot.id = c.model_id
-					) AS compares_criterias
-					FROM (cars_comparisons AS cc) 
-					JOIN cars AS c ON c.id = cc.car_main_id 
-					JOIN manufacturers AS ma ON ma.id = c.manufacturer_id 
-					JOIN models AS mo ON mo.id = c.model_id 
-					LEFT JOIN bodies AS b ON b.body_id = mo.body_id 
-					WHERE cc.active = 1 
-					GROUP BY c.model_id 
-					ORDER BY model_compares DESC, compares_value DESC
-				) 
-				
-				UNION 
-				
-				(SELECT 
-					COUNT(c.model_id) AS model_compares, 
-					ma.name AS manufacturer_name, 
-					mo.name AS model_name,
-					mo.image AS model_image,
-					b.body_name, 
-					mo.url_title, 
-					mo.id AS model_id, 
-					(
-						SELECT SUM(ccct.criteria_compare_value)
-						FROM models AS mot JOIN cars AS ct ON ct.model_id = mot.id 
-						JOIN cars_comparisons AS cct ON cct.car_compare_id = ct.id AND cct.active = 1
-						JOIN cars_comparisons_criteria AS ccct ON ccct.comparison_id = cct.id WHERE mot.id = c.model_id
-					) AS compares_value,
-					(
-						SELECT COUNT(cct.id)
-						FROM models AS mot JOIN cars AS ct ON ct.model_id = mot.id
-						JOIN cars_comparisons AS cct ON cct.car_compare_id = ct.id AND cct.active = 1
-						JOIN cars_comparisons_criteria AS ccct ON ccct.comparison_id = cct.id WHERE mot.id = c.model_id
-					) AS compares_criterias
-					FROM (cars_comparisons AS cc) 
-					JOIN cars AS c ON c.id = cc.car_compare_id 
-					JOIN manufacturers AS ma ON ma.id = c.manufacturer_id 
-					JOIN models AS mo ON mo.id = c.model_id 
-					LEFT JOIN bodies AS b ON b.body_id = mo.body_id 
-					WHERE cc.active = 1 
-					GROUP BY c.model_id 
-					ORDER BY model_compares DESC, compares_value DESC
-				)
-			) as final 
-			GROUP BY final.model_id 
-			ORDER BY model_compares DESC, compares_value DESC
-			LIMIT 11
-        ');
-        
-        return $command->queryAll();
+    	$query = (new Query())
+	        ->select([
+		        'model_compares' => 'SUM(final.model_compares)',
+				'compares_value' => 'FORMAT(SUM(final.compares_value) / SUM(final.compares_criteria), 1)',
+				'final.manufacturer_name',
+				'final.model_name',
+				'final.model_image',
+				'final.body_name',
+				'final.url_title',
+				'final.model_id'
+	        ])
+		    ->from([
+		        'final' => self::topSubQuery('main')->union(self::topSubQuery('compare'))
+		    ])
+		    ->groupBy('final.model_id')
+		    ->orderBy([
+			    'model_compares' => SORT_DESC,
+			    'compares_value' => SORT_DESC
+		    ])
+			->limit(11);
+
+    	return $query->all();
     }
 
+	/**
+	 * @param $type
+	 *
+	 * @return Query
+	 */
+    private static function topSubQuery($type)
+    {
+	    $queryValues = (new Query())
+		    ->select('SUM(ccct.criteria_' . $type . '_value)')
+		    ->from([
+			    'mot' => Model::tableName()
+		    ])
+		    ->innerJoin(Car::tableName() . ' AS ct', 'ct.model_id = mot.id')
+		    ->innerJoin(Comparison::tableName() . ' AS cct', 'cct.car_' . $type . '_id = ct.id AND cct.active = 1')
+		    ->innerJoin(CarComparisonCriteria::tableName() . ' AS ccct', 'ccct.comparison_id = cct.id')
+		    ->where('mot.id = c.model_id');
+
+	    $queryCriteria = (new Query)
+		    ->select('COUNT(cct.id)')
+		    ->from(['mot' => Model::tableName()])
+		    ->innerJoin(Car::tableName() . ' AS ct', 'ct.model_id = mot.id')
+		    ->innerJoin(Comparison::tableName() . ' AS cct', 'cct.car_' . $type . '_id = ct.id AND cct.active = 1')
+		    ->innerJoin(CarComparisonCriteria::tableName() . ' AS ccct', 'ccct.comparison_id = cct.id')
+		    ->where('mot.id = c.model_id');
+
+	    $query = (new Query())
+		    ->select([
+			    'model_compares' => 'COUNT(c.model_id)',
+			    'manufacturer_name' => 'ma.name',
+			    'model_name' => 'mo.name',
+			    'model_image' => 'mo.image',
+			    'b.body_name',
+			    'mo.url_title',
+			    'model_id' => 'mo.id',
+			    'compares_value' => $queryValues,
+			    'compares_criteria' => $queryCriteria
+		    ])
+		    ->from(['cc' => Comparison::tableName()])
+		    ->innerJoin(Car::tableName() . ' AS c', 'c.id = cc.car_' . $type . '_id')
+		    ->innerJoin(Manufacturer::tableName() . ' AS ma', 'ma.id = c.manufacturer_id')
+		    ->innerJoin(Model::tableName() . ' AS mo', 'mo.id = c.model_id')
+		    ->leftJoin(Body::tableName() . ' AS b', 'b.body_id = mo.body_id')
+		    ->where(['cc.active' => 1])
+		    ->groupBy('c.model_id')
+		    ->orderBy([
+			    'model_compares' => SORT_DESC,
+			    'compares_value' => SORT_DESC
+		    ]);
+
+	    return $query;
+    }
+
+	/**
+	 * @return bool
+	 */
     public function isLikable()
     {
         if (Yii::$app->user->isGuest || Yii::$app->user->identity->getId() == $this->user->id) {
@@ -812,6 +856,9 @@ class Comparison extends UserDependency
         return true;
     }
 
+	/**
+	 * @return bool
+	 */
     public function isFavorite()
     {
         foreach ($this->favorites as $favorite)
@@ -824,6 +871,9 @@ class Comparison extends UserDependency
         return false;
     }
 
+	/**
+	 * @return bool
+	 */
     public function canFavorite()
     {
         if (Yii::$app->user->isGuest || Yii::$app->user->identity->getId() == $this->user->id) {
@@ -851,6 +901,11 @@ class Comparison extends UserDependency
         ];
     }
 
+	/**
+	 * @param $postData
+	 *
+	 * @return Comparison|static|boolean
+	 */
     public static function add($postData)
     {
         $carMain = Car::findByParts(
@@ -965,6 +1020,11 @@ class Comparison extends UserDependency
         return $model;
     }
 
+	/**
+	 * @param $imagePath
+	 *
+	 * @return mixed
+	 */
     public function prepareImage($imagePath)
     {
         if (!Url::isRelative($imagePath)) {
@@ -987,6 +1047,9 @@ class Comparison extends UserDependency
         return $imagePath;
     }
 
+	/**
+	 * @return string
+	 */
     public function prepareUrl()
     {
         $string = $this->carMain->model->getFullName() . ' ' .
@@ -998,6 +1061,11 @@ class Comparison extends UserDependency
         return Inflector::transliterate($string, 'Russian-Latin/BGN; NFKD');
     }
 
+	/**
+	 * @param $type
+	 *
+	 * @return string
+	 */
     public function getImage($type)
     {
         $imageProp = $type . '_foto';
@@ -1008,12 +1076,18 @@ class Comparison extends UserDependency
         return $this->{$imageProp} ? UrlHelper::absolute($this->{$imageProp}) : $car->getImage();
     }
 
+	/**
+	 * @return string
+	 */
     public function getUrl()
     {
         $url = $this->url_title ? $this->url_title : $this->id;
         return UrlHelper::absolute('comparison/view/' . $url);
     }
 
+	/**
+	 * @return array|bool
+	 */
     public static function findRatingRange()
     {
         return (new yii\db\Query())
@@ -1022,6 +1096,9 @@ class Comparison extends UserDependency
             ->one();
     }
 
+	/**
+	 * Rating
+	 */
     public function recalculateRating()
     {
         $rating = 0;

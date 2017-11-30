@@ -439,8 +439,8 @@ $(function() {
 	$('.fnThanks').on('click', function() {
         if (!$(this).hasClass('disabled')) {
             ajaxSpinner.button($(this));
-            $('.fnDislike').addClass('disabled');
 
+            $('.fnDislike').addClass('disabled');
             addOpinion(0);
         }
 	});
@@ -448,8 +448,8 @@ $(function() {
 	$('.fnDislike').on('click', function() {
 	    if (!$(this).hasClass('disabled')) {
             ajaxSpinner.button($(this));
-            $('.fnThanks').addClass('disabled');
 
+            $('.fnThanks').addClass('disabled');
             addOpinion(1);
         }
 	});

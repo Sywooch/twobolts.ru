@@ -184,5 +184,9 @@ return [
     'Email is available.' => 'Электронная почта доступна для использования.',
 	'E-mail' => 'Электронная почта',
 	'Find a time zone...' => 'Выберите временную зону...',
-	'Get new notifications on email' => 'Получать уведомления о новых событиях на почту'
+	'Get new notifications on email' => 'Получать уведомления о новых событиях на почту',
+
+	'liked' => 'понравилось',
+	'disliked' => 'не понравилось',
+	'{user} {type} your comparison {url}' => '<strong>{user}</strong> {type} Ваше сравнение {url}.'
 ];

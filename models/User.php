@@ -64,6 +64,8 @@ use yii\web\UploadedFile;
  * @property UserProfile $profile
  * @property UserCar[] $cars
  * @property UserCommentKarma[] $commentsKarma
+ * @property Notification[] $notifications
+ *
  */
 class User extends ActiveRecord implements IdentityInterface
 {
@@ -383,6 +385,16 @@ class User extends ActiveRecord implements IdentityInterface
     public function getCommentsKarma()
     {
         return $this->hasMany(UserCommentKarma::className(), ['user_id' => 'id']);
+    }
+
+	/**
+	 * @return \yii\db\ActiveQuery
+	 */
+    public function getNotifications()
+    {
+    	return $this->hasMany(Notification::className(), ['user_id' => 'id'])
+		    ->andWhere(['is_read' => false])
+		    ->orderBy(['created' => SORT_DESC]);
     }
 
     /**
