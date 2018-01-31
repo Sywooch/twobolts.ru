@@ -188,5 +188,11 @@ return [
 
 	'liked' => 'понравилось',
 	'disliked' => 'не понравилось',
-	'{user} {type} your comparison {url}' => '<strong>{user}</strong> {type} Ваше сравнение {url}.'
+	'{user} {type} your comparison {url}' => 'Пользователю <strong>{user}</strong> {type} Ваше сравнение {url}.',
+	'{user} favorites your comparison {url}' => 'Пользователь <strong>{user}</strong> добавил Ваше сравнение {url} в избранное.',
+	'{user} commented your comparison {url}' => 'Пользователь <strong>{user}</strong> прокомментировал Ваше сравнение {url}.',
+	'{user} compares your car {url}' => 'Пользователь <strong>{user}</strong> сравнил авто из Вашего гаража: {url}.',
+	'{user} increase your karma' => 'Пользователь <strong>{user}</strong> плюсанул Вам карму.',
+	'{user} decrease your karma' => 'Пользователь <strong>{user}</strong> минусанул Вам карму.',
+	'No notifications' => 'Нет оповещений за последний месяц.'
 ];

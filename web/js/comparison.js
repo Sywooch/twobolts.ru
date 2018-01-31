@@ -329,7 +329,7 @@ $(function() {
                         manufacturerChange('main');
                         manufacturerChange('compare');
 
-                        if (comparisonData.garage || comparisonData.before) {
+                        if (Comparison.data.garage.length || Comparison.data.before.length) {
                             $('.switch-input').bootstrapSwitch('toggleIndeterminate');
                         }
 

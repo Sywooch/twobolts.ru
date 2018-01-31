@@ -45,11 +45,14 @@ class ComparisonController extends DefaultController
         ]);
     }
 
-    /**
-     * Разрешает для показа существующее сравнение.
-     * @param integer $id
-     * @return mixed
-     */
+	/**
+	 * Разрешает для показа существующее сравнение.
+	 *
+	 * @param $id
+	 *
+	 * @return Response
+	 * @throws NotFoundHttpException
+	 */
     public function actionActivate($id)
     {
         $model = $this->findModel($id);
@@ -60,11 +63,14 @@ class ComparisonController extends DefaultController
         return $this->redirect(Yii::$app->request->referrer);
     }
 
-    /**
-     * Запрещает для показа существующее сравнение.
-     * @param integer $id
-     * @return mixed
-     */
+	/**
+	 * Запрещает для показа существующее сравнение.
+	 *
+	 * @param $id
+	 *
+	 * @return Response
+	 * @throws NotFoundHttpException
+	 */
     public function actionBan($id)
     {
         $model = $this->findModel($id);
@@ -75,11 +81,14 @@ class ComparisonController extends DefaultController
         return $this->redirect(Yii::$app->request->referrer);
     }
 
-    /**
-     * Запрещает или разрешает для показа существующее сравнение на главной странице.
-     * @param integer $id
-     * @return mixed
-     */
+	/**
+	 * Запрещает или разрешает для показа существующее сравнение на главной странице.
+	 *
+	 * @param $id
+	 *
+	 * @return Response
+	 * @throws NotFoundHttpException
+	 */
     public function actionHome($id)
     {
         $model = $this->findModel($id);
@@ -90,12 +99,16 @@ class ComparisonController extends DefaultController
         return $this->redirect(Yii::$app->request->referrer);
     }
 
-    /**
-     * Deletes an existing Comparison model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     */
+	/**
+	 * Deletes an existing Comparison model.
+	 * If deletion is successful, the browser will be redirected to the 'index' page.
+	 * @param $id
+	 *
+	 * @return Response
+	 * @throws NotFoundHttpException
+	 * @throws \Exception
+	 * @throws \yii\db\StaleObjectException
+	 */
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();

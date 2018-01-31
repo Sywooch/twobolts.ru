@@ -11,6 +11,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
 use yii\db\Query;
+use yii\helpers\Html;
 use yii\helpers\Inflector;
 use yii\helpers\Url;
 
@@ -904,7 +905,9 @@ class Comparison extends UserDependency
 	/**
 	 * @param $postData
 	 *
-	 * @return Comparison|static|boolean
+	 * @return Comparison|boolean
+	 * @throws \Exception
+	 * @throws yii\db\StaleObjectException
 	 */
     public static function add($postData)
     {
@@ -947,22 +950,6 @@ class Comparison extends UserDependency
         $model->main_time = $postData['mainTime'];
         $model->compare_time = $postData['compareTime'];
 
-        $garage = ArrayHelper::getValue($postData, 'garage');
-        $before = ArrayHelper::getValue($postData, 'before');
-
-        $user = User::identity();
-        if ($garage) {
-        	foreach ($garage as $garageItem) {
-		        $user->updateCar(${'car' . ucfirst($garageItem)}->id, 'garage', $model->{$garageItem . '_foto'});
-	        }
-        }
-        if ($before) {
-	        foreach ($before as $beforeItem)
-	        {
-		        $user->updateCar(${'car' . ucfirst($beforeItem)}->id, 'before', $model->{$beforeItem . '_foto'});
-	        }
-        }
-
         switch ($model->main_time) {
             case 'До 1 года': $model->rating += .2; break;
             case '1-2 года': $model->rating += .4; break;
@@ -986,6 +973,7 @@ class Comparison extends UserDependency
         $criteriaSuccess = true;
         if ($model->validate() && $model->save()) {
             $criteria = $postData['criteria'];
+
             foreach ($criteria as $item)
             {
                 $comparisonCriteria = new CarComparisonCriteria();
@@ -1006,6 +994,24 @@ class Comparison extends UserDependency
             if ($criteriaSuccess) {
                 $model->save();
 
+	            $garage = ArrayHelper::getValue($postData, 'garage');
+	            $before = ArrayHelper::getValue($postData, 'before');
+
+	            $user = User::identity();
+	            if ($garage) {
+		            foreach ($garage as $garageItem) {
+			            $user->updateCar(${'car' . ucfirst($garageItem)}->id, 'garage', $model->{$garageItem . '_foto'});
+		            }
+	            }
+	            if ($before) {
+		            foreach ($before as $beforeItem)
+		            {
+			            $user->updateCar(${'car' . ucfirst($beforeItem)}->id, 'before', $model->{$beforeItem . '_foto'});
+		            }
+	            }
+
+	            $model->notifyUsers();
+
                 Yii::$app->mailer->compose('new_comparison', ['model' => $model, 'user' => $user])
                     ->setFrom(Yii::$app->params['adminEmail'])
                     ->setTo(Yii::$app->params['adminEmail'])
@@ -1018,6 +1024,41 @@ class Comparison extends UserDependency
         }
 
         return $model;
+    }
+
+	/**
+	 * @throws yii\db\Exception
+	 */
+    public function notifyUsers()
+    {
+    	/** @var UserCar[] $users */
+    	$users = UserCar::find()
+		    ->andWhere(['!=', 'user_id', User::identity()->id])
+		    ->andWhere(['in', 'car_id', [$this->car_main_id, $this->car_compare_id]])
+	        ->all();
+
+    	$message = Yii::t('app', '{user} compares your car {url}', [
+    		'user' => User::identity()->username,
+		    'url' => Html::a($this->getShortName(), $this->getUrl())
+	    ]);
+
+	    $data = [];
+
+    	foreach ($users as $user)
+	    {
+	    	$data[] = [
+			    'created' => date('Y-m-d H:i:s'),
+		        'is_read' => 0,
+			    'user_id' => $user->user_id,
+			    'author_id' => User::identity()->id,
+		        'message' => $message,
+			    'type' => Notification::TYPE_NEW_COMPARISON
+		    ];
+	    }
+
+	    if ($data) {
+		    Notification::batchCreate($data);
+	    }
     }
 
 	/**

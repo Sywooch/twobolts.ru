@@ -5,5 +5,5 @@ return [
     'siteTitle' => 'Twobolts',
     'cookieDomain' => 'test.twobolts.ru',
     'webRoot' => 'docs',
-    'useFileTransport' => true
+    'useFileTransport' => false
 ];

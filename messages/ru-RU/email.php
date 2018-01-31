@@ -15,5 +15,6 @@ return [
     'New comparison added' => 'Новое сравнение на сайте',
     'User {username} had added new comparison' => 'Пользователь {username} разместил новое сравнение.',
 	'New password for account' => 'Новый пароль для учетной записи',
-	'Car request approved' => 'Запрос на добавление авто подтвержден'
+	'Car request approved' => 'Запрос на добавление авто подтвержден',
+	'New notification' => 'Оповещение об активности'
 ];

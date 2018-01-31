@@ -16,6 +16,7 @@ $this->title = $title . ' — ' . Yii::$app->params['siteTitle'];
 $this->registerMetaTag([
     'description' => $metaDescription
 ]);
+
 ?>
 
 <div class="comparison-index inside height-wrapper">
@@ -37,7 +38,11 @@ $this->registerMetaTag([
 
     <?php if ($itemsCount > ComparisonList::ITEMS_PER_PAGE): ?>
         <div class="comparison-list-btn-wrap">
-            <div class="btn btn-default btn-lg btnLoadMore"><span><?= Yii::t('app', 'Load More')?> <span class="badge"><?= $itemsCount - $pageNum * ComparisonList::ITEMS_PER_PAGE; ?></span></span></div>
+            <div class="btn btn-default btn-lg btnLoadMore" style="display: <?= $itemsCount - $pageNum * ComparisonList::ITEMS_PER_PAGE > 0 ? 'block' : 'none'; ?>;">
+                <span>
+                    <?= Yii::t('app', 'Load More')?> <span class="badge"><?= $itemsCount - $pageNum * ComparisonList::ITEMS_PER_PAGE; ?></span>
+                </span>
+            </div>
         </div>
     <?php endif; ?>
 

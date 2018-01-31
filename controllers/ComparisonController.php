@@ -13,6 +13,7 @@ use app\models\Manufacturer;
 use app\models\Model;
 use app\models\Notification;
 use app\models\User;
+use app\models\UserCar;
 use app\models\UserFavorite;
 use yii;
 use yii\filters\AccessControl;
@@ -155,6 +156,7 @@ class ComparisonController extends BaseController
 
 	/**
 	 * @return array
+	 * @throws \Exception
 	 */
     public function actionFindItems()
     {
@@ -199,6 +201,7 @@ class ComparisonController extends BaseController
 
 	/**
 	 * @return array
+	 * @throws \Exception
 	 */
     public function actionFindManufacturerItems()
     {
@@ -243,6 +246,7 @@ class ComparisonController extends BaseController
 
 	/**
 	 * @return array
+	 * @throws \Exception
 	 */
     public function actionFindModelItems()
     {
@@ -287,6 +291,7 @@ class ComparisonController extends BaseController
 
 	/**
 	 * @return array
+	 * @throws \Exception
 	 */
     public function actionFindUserItems()
     {
@@ -297,6 +302,7 @@ class ComparisonController extends BaseController
 	 * @param string $pattern
 	 *
 	 * @return array
+	 * @throws \Exception
 	 */
     private function renderItems($pattern = '')
     {
@@ -340,7 +346,6 @@ class ComparisonController extends BaseController
 	 */
     public function actionView($comparisonId = null)
     {
-        /** @var Comparison $comparison */
         if (filter_var($comparisonId, FILTER_VALIDATE_INT)) {
             $comparison = Comparison::findById($comparisonId);
         } else {
@@ -377,7 +382,9 @@ class ComparisonController extends BaseController
             $thanks->dislike = $like;
             
             if ($thanks->validate() && $thanks->save()) {
-            	Notification::create(Notification::TYPE_LIKE_COMPARISON, $model->user_id, [
+            	$type = $like ? Notification::TYPE_DISLIKE_COMPARISON : Notification::TYPE_LIKE_COMPARISON;
+
+            	Notification::create($type, $model->user_id, [
             		'type' => $like ? Yii::t('app', 'disliked') : Yii::t('app', 'liked'),
 		            'url' => Html::a($model->getShortName(), $model->getUrl())
 	            ]);
@@ -413,6 +420,10 @@ class ComparisonController extends BaseController
             $favorite->user_id = Yii::$app->user->identity->getId();
 
             if ($favorite->validate() && $favorite->save()) {
+	            Notification::create(Notification::TYPE_FAVORITE_COMPARISON, $model->user_id, [
+		            'url' => Html::a($model->getShortName(), $model->getUrl())
+	            ]);
+
                 return [
                     'status' => 'ok'
                 ];
@@ -505,12 +516,15 @@ class ComparisonController extends BaseController
 
 	/**
 	 * @return array
+	 * @throws \Exception
+	 * @throws yii\db\StaleObjectException
 	 */
     public function actionAddModel()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         $model = Comparison::add(Yii::$app->request->post());
+
         if ($model->hasErrors() || $model->customError) {
             $errors = [];
             if ($model->hasErrors()) {
@@ -519,6 +533,7 @@ class ComparisonController extends BaseController
             if ($model->customError) {
                 $errors[] = $model->customError;
             }
+
             return [
                 'error' => ArrayHelper::toString($errors)
             ];

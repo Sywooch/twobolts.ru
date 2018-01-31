@@ -128,15 +128,47 @@ a.md {
     font-size: 12px;
     color: #878787;
     position: relative;
+}
+
+.login-panel .nav > li > a {
+    padding: 0 5px 10px 0;
+    background: #35383f !important;
+}
+
+.login-panel .dropdown-menu > li > a {
+    padding: 3px 5px;
+}
+
+.user-avatar-24 {
+    width: 24px;
+    height: 24px;
     overflow: hidden;
+    border-radius: 50%;
+    float: left;
+}
+
+.user-avatar-24 img {
+    width: 24px;
+}
+
+.user-avatar-32 {
+    width: 32px;
+    height: 32px;
+    overflow: hidden;
+    border-radius: 50%;
+    float: left;
+}
+
+.user-avatar-32 img {
+    width: 32px;
+}
+
+.block {
+    display:  block;
 }
 
 .login-panel.authorized {
-    padding: 14px 15px;
-}
-
-.login-panel a {
-
+    padding: 14px 15px 1px;
 }
 
 .login-link {
@@ -145,14 +177,106 @@ a.md {
     line-height: 16px;
 }
 
-.login-link a {
+.login-link .bordered {
     text-decoration: none;
-    border-bottom: 1px solid #646464;
-    margin-right: 7px;
+    border-bottom: 1px dotted #646464;
 }
 
 .login-link a:hover {
     color: #999;
+}
+
+.login-link .fa {
+    font-size: 16px;
+    margin-left: 3px;
+    cursor: pointer;
+}
+
+.login-link  .dropdown-menu li {
+    font-size: 13px;
+}
+
+.login-link  .dropdown-menu li a {
+    color: #000;
+}
+
+.login-link  .dropdown-menu li .fa {
+    font-size: 14px;
+    color: #bbb;
+    margin-right: 5px;
+}
+
+.login-link  .dropdown-menu li a:hover .fa {
+    color: #333;
+}
+
+.user-notification-wrapper {
+    position: relative;
+}
+
+.user-notification-wrapper span {
+    position: absolute;
+    top: -8px;
+    right: 1px;
+}
+
+.user-notification-wrapper.has-notification sup {
+    color: #f83f15;
+    font-weight: bold;
+    top: -1em;
+    font-size: 11px;
+}
+
+.user-notification-wrapper.has-notification .fa {
+    margin-right: 0;
+}
+
+.user-notification-wrapper.has-notification:hover .fa, .user-notification.open .fa {
+    text-shadow: 0 0 10px #000;
+    color: #f83f15;
+    cursor: pointer;
+}
+
+.user-notification a {
+    display: inline;
+}
+
+.user-notification .dropdown-menu {
+    min-width: 350px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.user-notification p {
+    padding: 5px 8px;
+    color: #000;
+    display: flex;
+}
+
+.login-link .user-notification .dropdown-menu .fa {
+    text-shadow: none;
+    font-size: 22px;
+    color: #000;
+    margin: 0 8px 0 0;
+    opacity: .25;
+}
+
+.login-link .user-notification .dropdown-menu .new-notification .fa {
+    color: #f83f15;
+    opacity: .5;
+}
+
+.login-link .user-notification .dropdown-menu li a {
+    color: #333;
+    border-bottom: 1px solid;
+}
+
+.login-link .user-notification .dropdown-menu li:hover {
+    background: #eee;
+}
+
+.login-link .user-notification img {
+    margin-right: 5px;
 }
 
 .login-icon-wrapper {
@@ -280,11 +404,8 @@ a.md {
     top: 1px;
 }
 
-.logged-user-name a {
-    font-weight: bold;
-    float: none;
-    color: #fff;
-    margin-right: 0;
+.logged-user-name {
+    margin-left: 32px;
 }
 
 .menu {
@@ -690,7 +811,7 @@ p.cmpsm_small_block_pnt_r_pt {
 
 .in_header {
     position: absolute;
-    top: -8px;
+    top: -3px;
     left: 0;
 }
 
@@ -2891,4 +3012,8 @@ a.text-underline:hover {
     color: #fff;
     background-color: #337ab7;
     border-left: 5px solid #195181;
+}
+
+.blueimp-gallery .slide img {
+    cursor: move;
 }

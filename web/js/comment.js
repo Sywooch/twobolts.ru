@@ -6,7 +6,7 @@ $(function() {
 		e.preventDefault();
 	
 		$('.comments-list').slideToggle(function() {
-			if ($('.comments-list').css('display') == 'none') {
+			if ($('.comments-list').css('display') === 'none') {
 				$('.comments-wrap h2 .fa').removeClass('fa-caret-up').addClass('fa-caret-down');
 			} else {
 				$('.comments-wrap h2 .fa').removeClass('fa-caret-down').addClass('fa-caret-up');
@@ -36,7 +36,7 @@ $(function() {
 		}
 	}
 	
-	$('.ui-state-disabled').each(function(index, element) {
+	$('.ui-state-disabled').each(function() {
         $(this).attr('disabled', true);
     });
 	
@@ -194,7 +194,7 @@ $(function() {
 
     var updateUserKarma = function(elem, type) {
         var karma = parseInt(elem.siblings('.karma-total').text());
-        if (type == 'increase') {
+        if (type === 'increase') {
             ++karma;
         } else {
             --karma;
@@ -218,11 +218,11 @@ $(function() {
         elem.siblings('.karma-total').addClass(karmaClass).text(karmaSign + karma);
     };
 
-	$('.fnIncreaseUserKarma').on('click', function() {
+	$body.on('click', '.fnIncreaseUserKarma', function() {
 		manageCommentKarma($(this), 'increase');
 	});
 
-	$('.fnDecreaseUserKarma').on('click', function() {
+	$body.on('click', '.fnDecreaseUserKarma', function() {
 		manageCommentKarma($(this), 'decrease');
 	});
 
@@ -233,14 +233,6 @@ $(function() {
 
         $('.fnCommentQuote').on('click', function() {
             setCommentQuote($(this))
-        });
-
-        $('.fnIncreaseUserKarma').on('click', function() {
-            manageCommentKarma($(this), 'increase');
-        });
-
-        $('.fnDecreaseUserKarma').on('click', function() {
-            manageCommentKarma($(this), 'decrease');
         });
 
         $('.user-comment-wrapper').on('mouseenter', function() {

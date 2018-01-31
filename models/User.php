@@ -388,13 +388,52 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
 	/**
-	 * @return \yii\db\ActiveQuery
+	 * @return yii\db\ActiveQuery
 	 */
     public function getNotifications()
     {
-    	return $this->hasMany(Notification::className(), ['user_id' => 'id'])
-		    ->andWhere(['is_read' => false])
-		    ->orderBy(['created' => SORT_DESC]);
+    	return $this->hasMany(Notification::className(), ['user_id' => 'id']);
+    }
+
+	/**
+	 * @return int|string
+	 */
+    public function getUnreadNotificationsCount()
+    {
+	    return $this->hasMany(Notification::className(), ['user_id' => 'id'])
+		    ->andWhere(['is_read' => 0])
+		    ->andWhere(['>=', 'created', date('Y-m-d', strtotime('-30 days'))])
+		    ->count('id');
+    }
+	
+	/**
+	 * @return array|ActiveRecord[]|Notification[]
+	 */
+    public function getLastNotifications()
+    {
+	    $near = (new Query)
+		    ->select('*')
+		    ->from(Notification::tableName())
+		    ->andWhere(['>=', 'created', date('Y-m-d', strtotime('-30 days'))]);
+	
+	    $far = (new Query)
+		    ->select('*')
+		    ->from(Notification::tableName())
+		    ->andWhere(['<', 'created', date('Y-m-d', strtotime('-30 days'))]);
+	    
+    	return $this->getNotifications()
+		    ->from(['q' => $near->union($far)])
+		    ->orderBy(['created' => SORT_DESC])
+		    ->limit(30)
+		    ->all();
+    }
+
+	/**
+	 * MArk notifications as read
+	 */
+    public function markNotifications()
+    {
+    	Notification::updateAll(['is_read' => 1], ['user_id' => $this->id]);
     }
 
     /**
@@ -724,9 +763,11 @@ class User extends ActiveRecord implements IdentityInterface
 
         return false;
     }
-
+    
 	/**
 	 * @return bool
+	 * @throws \Exception
+	 * @throws yii\db\StaleObjectException
 	 */
     public function beforeDelete()
     {
@@ -832,5 +873,21 @@ class User extends ActiveRecord implements IdentityInterface
     public function isAdmin()
     {
     	return $this->role == self::ROLE_ADMIN;
+    }
+	
+	/**
+	 * @return bool
+	 */
+    public function hasEmail()
+    {
+	    return filter_var($this->email, FILTER_VALIDATE_EMAIL, FILTER_NULL_ON_FAILURE) != null;
+    }
+	
+	/**
+	 * @return bool
+	 */
+    public function isNotifiable()
+    {
+	    return $this->profile && $this->profile->notification && $this->hasEmail();
     }
 }

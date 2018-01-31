@@ -5,10 +5,12 @@ use app\components\ArrayHelper;
 use app\models\Comparison;
 use app\models\Comment;
 use app\models\News;
+use app\models\Notification;
 use app\models\UserCommentKarma;
 use yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\Html;
 use yii\web\Response;
 
 class CommentController extends BaseController
@@ -43,6 +45,9 @@ class CommentController extends BaseController
         ];
     }
 
+	/**
+	 * @return array
+	 */
     public function actionAdd()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -61,6 +66,14 @@ class CommentController extends BaseController
             $comment->text = $commentText;
 
             if ($comment->validate() && $comment->save()) {
+            	if ($objectClass == Comparison::className()) {
+            		$comparison = Comparison::findOne($objectId);
+
+		            Notification::create(Notification::TYPE_NEW_COMMENT, $comparison->user_id, [
+			            'url' => Html::a($comparison->getShortName(), $comparison->getUrl())
+		            ]);
+	            }
+
                 return [
                     'status' => 'ok',
                     'comment' => $this->renderAjax('@app/views/_comment', ['model' => $comment, 'counter' => 0])
@@ -77,6 +90,9 @@ class CommentController extends BaseController
         ];
     }
 
+	/**
+	 * @return array
+	 */
     public function actionManageKarma()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -98,6 +114,9 @@ class CommentController extends BaseController
             $karma->{$date} = date('Y-m-d H:i:s');
 
             if ($karma->validate() && $karma->save()) {
+            	$comment = Comment::findOne($commentId);
+            	Notification::create($type, $comment->user_id);
+
                 return [
                     'status' => 'ok'
                 ];

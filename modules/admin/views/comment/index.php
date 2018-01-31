@@ -88,7 +88,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Comments');
                 'width' => '15%'
             ],
             [
-                'class' => UserColumn::class,
+                'class' => UserColumn::className(),
                 'attribute' => 'user_id',
                 'user_attribute' => 'user',
                 'width' => '10%'

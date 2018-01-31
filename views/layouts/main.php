@@ -110,21 +110,27 @@ if (!is_array($messages)) {
             <div class="menu">
                 <ul>
                     <li>
-                        <a href="<?= BaseUrl::home(true) . 'comparison'; ?>" class="<?= $checkController('comparison') ? 'current-menu' : ''; ?>">
-                            <?= Yii::t('app', 'Compares') . ($totalComparisons > 0 ? ' <sup>'.$totalComparisons.'</sup>' : ''); ?>
-                        </a>
+                        <?= Html::a(
+	                        Yii::t('app', 'Compares') . ($totalComparisons > 0 ? ' <sup>'.$totalComparisons.'</sup>' : ''),
+	                        BaseUrl::home(true) . 'comparison',
+	                        ['class' => $checkController('comparison') ? 'current-menu' : '']
+                        ); ?>
                     </li>
 
                     <li>
-                        <a href="<?=BaseUrl::home(true) . 'catalog'; ?>" class="<?= $checkController('catalog') ? 'current-menu' : ''; ?>">
-                            <?= Yii::t('app', 'Catalog') . ($totalCars > 0 ? ' <sup>'.$totalCars.'</sup>' : ''); ?>
-                        </a>
+	                    <?= Html::a(
+		                    Yii::t('app', 'Catalog') . ($totalCars > 0 ? ' <sup>'.$totalCars.'</sup>' : ''),
+		                    BaseUrl::home(true) . 'catalog',
+		                    ['class' => $checkController('catalog') ? 'current-menu' : '']
+	                    ); ?>
                     </li>
 
                     <li>
-                        <a href="<?= BaseUrl::home(true) . 'news'; ?>" class="<?= $checkController('news') ? 'current-menu' : ''; ?>">
-                            <?= Yii::t('app', 'Auto News'); ?>
-                        </a>
+	                    <?= Html::a(
+		                    Yii::t('app', 'Auto News'),
+		                    BaseUrl::home(true) . 'news',
+		                    ['class' => $checkController('news') ? 'current-menu' : '']
+	                    ); ?>
                     </li>
                 </ul>
             </div>

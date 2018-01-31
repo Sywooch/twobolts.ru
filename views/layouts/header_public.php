@@ -6,7 +6,7 @@ use yii\widgets\ActiveForm;
 ?>
 
 <div class="login-link">
-    <a href="#" id="authOpen">Вход на сайт</a>
+    <a href="#" id="authOpen" class="bordered">Вход на сайт</a>
 
     <span style="margin-right:10px;">или авторизуйтесь одной из сетей</span>
     <span class="login-icon-wrapper login-icon-vk">

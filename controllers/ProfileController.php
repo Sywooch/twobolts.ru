@@ -244,6 +244,8 @@ class ProfileController extends BaseController
 
 	/**
 	 * @return Response
+	 * @throws \Exception
+	 * @throws yii\db\StaleObjectException
 	 */
     public function actionDeleteCar()
     {
@@ -312,5 +314,13 @@ class ProfileController extends BaseController
     	User::identity()->profile->updateAttributes([
     		'notification' => $status
 	    ]);
+    }
+
+	/**
+	 * Mark user's notifications as read
+	 */
+    public function actionMarkNotification()
+    {
+	    User::identity()->markNotifications();
     }
 }
